@@ -1,41 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Chapter Quiz</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      visibility: hidden;
-    }
-    body.loaded {
-      visibility: visible;
-    }
 
-    /* Spinner */
+  <style>
+    /* Force-hidden fallback so page doesn't flash unstyled or show sections
+       if Tailwind doesn't load or utilities aren't available. */
+    .hidden { display: none !important; }
+
+    /* Keep body hidden until we explicitly show it */
+    body { visibility: hidden; }
+    body.loaded { visibility: visible; }
+
+    /* Loader (spinner) */
     #loader {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: white;
+      background: #ffffff;
       z-index: 9999;
     }
     .spinner {
       border: 8px solid #e5e7eb;
       border-top: 8px solid #2563eb;
       border-radius: 50%;
-      width: 60px;
-      height: 60px;
+      width: 56px;
+      height: 56px;
       animation: spin 1s linear infinite;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+    /* Your quiz styles (unchanged) */
     .option {
       padding: 10px;
       border: 1px solid #ccc;
@@ -43,17 +43,9 @@
       margin: 6px 0;
       cursor: pointer;
     }
-    .option.selected {
-      background-color: #cbd5e1;
-    }
-    .option.correct {
-      background-color: #22c55e; /* green */
-      color: white;
-    }
-    .option.wrong {
-      background-color: #ef4444; /* red */
-      color: white;
-    }
+    .option.selected { background-color: #cbd5e1; }
+    .option.correct { background-color: #22c55e; color: white; }
+    .option.wrong { background-color: #ef4444; color: white; }
     .question-card {
       background: white;
       padding: 20px;
@@ -61,20 +53,16 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       margin-bottom: 20px;
     }
-    .answered {
-      background-color: #22c55e;
-      color: white;
-    }
-    .not-answered {
-      background-color: #e5e7eb;
-    }
+    .answered { background-color: #22c55e; color: white; }
+    .not-answered { background-color: #e5e7eb; }
   </style>
 </head>
 <body class="bg-white min-h-screen p-6">
 
-  <!-- Loader -->
+  <!-- Loader (visible until we call showApp()) -->
   <div id="loader"><div class="spinner"></div></div>
 
+  <!-- App container (initially hidden via fallback .hidden) -->
   <div id="app" class="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-lg hidden">
     <h1 class="text-3xl font-bold mb-2 text-center text-blue-900">GOVT. BOYS HR. SEC. SCHOOL</h1>
     <h2 class="text-2xl font-semibold mb-2 text-center text-blue-800">PODATURPET - 631208</h2>
@@ -141,7 +129,9 @@
   </div>
 
   <script>
+    // your Apps Script endpoint (replace if needed)
     const APP_URL = "https://script.google.com/macros/s/AKfycbySv6MgUk6qntlbJnYd9sOoruonZQSChDibk9P7TnQ9sXGH7pUIpuhndRAIJkeu2A8E/exec";
+
     let studentName = "";
     let schoolName = "";
     let currentChapter = "";
@@ -167,9 +157,13 @@
           list.innerHTML = "";
           data.chapters.forEach(ch => {
             const li = document.createElement("li");
-            li.innerHTML = `<button onclick="startChapter('${ch.id}')" 
+            // ch may be a string; previous code used ch.id and ch.name.
+            // We'll support both array-of-strings and array-of-objects.
+            let id = (typeof ch === "string") ? ch : (ch.id || ch.name);
+            let name = (typeof ch === "string") ? ch : (ch.name || ch.id);
+            li.innerHTML = `<button onclick="startChapter('${escapeHtml(id)}')" 
               class="w-full bg-indigo-500 text-white py-2 px-4 rounded-lg shadow hover:bg-indigo-600">
-              ${ch.name}</button>`;
+              ${escapeHtml(name)}</button>`;
             list.appendChild(li);
           });
         })
@@ -185,10 +179,10 @@
       fetch(APP_URL + "?mode=questions&chapter=" + encodeURIComponent(chapter))
         .then(r => r.json())
         .then(data => {
-          questions = data.questions;
+          questions = data.questions || [];
           currentIndex = 0;
           answers = {};
-          timeLeft = questions.length * 60;
+          timeLeft = (questions.length || 0) * 60;
           startTimer();
           renderQuestion();
           renderQuestionNav();
@@ -197,20 +191,20 @@
     }
 
     function renderQuestion() {
-      const q = questions[currentIndex];
+      const q = questions[currentIndex] || { question: "No question", options: [] };
       const container = document.getElementById("questionContainer");
       container.innerHTML = `
         <div class="question-card">
-          <p class="font-semibold mb-3">Q${currentIndex + 1}. ${q.question}</p>
-          ${q.options.map((opt, i) => `
+          <p class="font-semibold mb-3">Q${currentIndex + 1}. ${escapeHtml(q.question || "")}</p>
+          ${ (q.options || []).map((opt, i) => `
             <div class="option ${answers[currentIndex] === opt ? 'selected' : ''}" 
-                 onclick="selectOption('${opt}')">${opt}</div>
-          `).join("")}
+                 onclick="selectOption('${escapeJs(opt)}')">${escapeHtml(opt)}</div>
+          `).join("") }
         </div>
       `;
       document.getElementById("backBtn").classList.toggle("hidden", currentIndex === 0);
-      document.getElementById("nextBtn").classList.toggle("hidden", currentIndex === questions.length - 1);
-      document.getElementById("submitBtn").classList.toggle("hidden", currentIndex !== questions.length - 1);
+      document.getElementById("nextBtn").classList.toggle("hidden", currentIndex === (questions.length - 1));
+      document.getElementById("submitBtn").classList.toggle("hidden", currentIndex !== (questions.length - 1));
     }
 
     function renderQuestionNav() {
@@ -230,20 +224,8 @@
       renderQuestion();
       renderQuestionNav();
     }
-
-    function nextQuestion() {
-      if (currentIndex < questions.length - 1) {
-        currentIndex++;
-        renderQuestion();
-      }
-    }
-
-    function prevQuestion() {
-      if (currentIndex > 0) {
-        currentIndex--;
-        renderQuestion();
-      }
-    }
+    function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); } }
+    function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); } }
 
     function startTimer() {
       clearInterval(timer);
@@ -276,48 +258,77 @@
 
         review.push(`
           <div class="question-card">
-            <p class="font-semibold mb-2">Q${i + 1}. ${q.question}</p>
-            ${q.options.map(opt => `
+            <p class="font-semibold mb-2">Q${i + 1}. ${escapeHtml(q.question || "")}</p>
+            ${ (q.options || []).map(opt => `
               <div class="option
                 ${opt === correct ? 'correct' : ''}
                 ${opt === chosen && chosen !== correct ? 'wrong' : ''}">
-                ${opt}
+                ${escapeHtml(opt)}
               </div>
-            `).join("")}
+            `).join("") }
           </div>
         `);
       });
 
       document.getElementById("quizSection").classList.add("hidden");
       document.getElementById("resultSection").classList.remove("hidden");
-      document.getElementById("scoreText").innerText = 
+      document.getElementById("scoreText").innerText =
         `${studentName} (${schoolName}), you scored ${score} out of ${questions.length}`;
       document.getElementById("reviewContainer").innerHTML = review.join("");
 
       // Save to Google Sheets
       fetch(APP_URL, {
         method: "POST",
-        body: JSON.stringify({ 
-          name: studentName, 
+        body: JSON.stringify({
+          name: studentName,
           school: schoolName,
-          chapter: currentChapter, 
-          score, 
-          answers 
+          chapter: currentChapter,
+          score,
+          answers
         })
-      });
+      }).catch(() => {/* ignore save errors on UI */});
     }
 
     function backToChapters() {
+      // reset quiz UI so student can choose another chapter
       document.getElementById("resultSection").classList.add("hidden");
       document.getElementById("chapterSection").classList.remove("hidden");
+      // clear previous data
+      questions = [];
+      currentIndex = 0;
+      answers = {};
+      document.getElementById("questionContainer").innerHTML = "";
+      document.getElementById("questionNav").innerHTML = "";
+      document.getElementById("timer").innerText = "";
     }
 
-    // Hide loader & show app once page fully loaded
-    window.onload = () => {
-      document.body.classList.add("loaded");
-      document.getElementById("loader").style.display = "none";
-      document.getElementById("app").classList.remove("hidden");
-    };
+    /* Utility: escape to prevent script/style injection when rendering text */
+    function escapeHtml(s) {
+      if (!s) return "";
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function escapeJs(s) {
+      if (!s) return "";
+      return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"').replace(/\n/g,'\\n');
+    }
+
+    /* Show the app (hide loader) — robust: called on load, DOMContentLoaded, or fallback */
+    function showApp() {
+      if (window._appShown) return;
+      window._appShown = true;
+      const loader = document.getElementById('loader');
+      const app = document.getElementById('app');
+      document.body.classList.add('loaded');
+      if (loader) loader.style.display = 'none';
+      if (app) { app.classList.remove('hidden'); app.style.display = 'block'; }
+      if (window._appFallbackTimeout) clearTimeout(window._appFallbackTimeout);
+    }
+
+    // Use multiple triggers to maximize compatibility
+    window.addEventListener('load', showApp);
+    document.addEventListener('DOMContentLoaded', () => { setTimeout(showApp, 100); });
+    // Fallback: show app after 3s even if events didn't fire
+    window._appFallbackTimeout = setTimeout(showApp, 3000);
   </script>
 </body>
 </html>
