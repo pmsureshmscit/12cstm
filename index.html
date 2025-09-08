@@ -2,176 +2,87 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Chapter Quiz</title>
+  <title>12th Computer Science Quiz</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f8fafc;
-      margin: 0;
-      padding: 20px;
-      color: #111827;
-    }
-    #app {
-      max-width: 1000px;
-      margin: auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-    }
-    h1, h2 {
-      margin: 5px 0;
-      text-align: center;
-    }
-    h1 { color: #1e3a8a; }
-    h2 { color: #1d4ed8; }
-    hr {
-      border: none;
-      border-top: 4px solid #dc2626;
-      margin: 20px 0;
-    }
-    input {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      width: 50%;
-      margin-bottom: 12px;
-      font-size: 16px;
-    }
-    button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      color: #fff;
-    }
-    button:hover { opacity: 0.9; }
-    .btn-blue { background: #2563eb; }
-    .btn-green { background: #16a34a; }
-    .btn-gray { background: #6b7280; }
-    .btn-indigo { background: #4f46e5; }
-    .hidden { display: none; }
-
-    /* Quiz layout */
-    .flex { display: flex; }
-    .space-between { justify-content: space-between; }
-    .w-75 { width: 75%; padding-right: 15px; }
-    .w-25 { width: 25%; padding-left: 15px; }
-
-    .question-card {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-    .option {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      margin: 6px 0;
-      cursor: pointer;
-    }
-    .option:hover { background: #f3f4f6; }
-    .option.selected { background: #cbd5e1; }
-    .option.correct { background: #22c55e; color: #fff; }
-    .option.wrong { background: #ef4444; color: #fff; }
-
-    .answered {
-      background: #22c55e;
-      color: #fff;
-    }
-    .not-answered {
-      background: #e5e7eb;
-    }
-    #questionNav button {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    #timer {
-      font-size: 18px;
-      font-weight: bold;
-      color: #dc2626;
-    }
-    #reviewContainer .question-card {
-      background: #f9fafb;
-    }
+    .option { padding:10px; border:1px solid #ccc; border-radius:8px; margin:6px 0; cursor:pointer; }
+    .option.selected { background-color:#cbd5e1; }
+    .option.correct { background-color:#22c55e; color:white; }
+    .option.wrong { background-color:#ef4444; color:white; }
+    .question-card { background:white; padding:20px; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); margin-bottom:20px; }
+    .answered { background-color:#22c55e; color:white; }
+    .not-answered { background-color:#e5e7eb; }
   </style>
 </head>
-<body>
+<body class="bg-gray-50 min-h-screen p-6">
 
-  <div id="app">
-    <h1>GOVT. BOYS HR. SEC. SCHOOL</h1>
-    <h2>PODATURPET - 631208</h2>
-    <h2>TIRUVALLUR DISTRICT</h2>
-    <hr>
-    <h1>
+  <div id="app" class="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
+    <h1 class="text-3xl font-bold mb-2 text-center text-blue-900">GOVT. BOYS HR. SEC. SCHOOL</h1>
+    <h2 class="text-2xl font-semibold mb-2 text-center text-blue-800">PODATURPET - 631208</h2>
+    <h2 class="text-2xl font-semibold mb-6 text-center text-blue-800">TIRUVALLUR DISTRICT</h2>
+    <hr class="border-t-4 border-red-600 mb-6">
+    <h1 class="text-2xl font-bold mb-6 text-center text-gray-900">
       12TH STANDARD COMPUTER SCIENCE <br>
-      <span style="color:#1d4ed8;">TAMIL MEDIUM – BOOK BACK ONE MARKS QUIZ</span>
+      <span class="text-blue-700">TAMIL MEDIUM – BOOK BACK ONE MARKS QUIZ</span>
     </h1>
 
     <!-- Login -->
     <div id="loginSection" class="text-center">
-      <input id="studentName" type="text" placeholder="Enter your name"><br>
-      <input id="schoolName" type="text" placeholder="Enter your school name"><br>
-      <button onclick="enterQuiz()" class="btn-blue">Start</button>
+      <input id="studentName" type="text" placeholder="Enter your name" class="border p-2 rounded w-1/2 mb-4">
+      <input id="schoolName" type="text" placeholder="Enter your school" class="border p-2 rounded w-1/2 mb-4">
+      <button onclick="enterQuiz()" class="bg-blue-600 text-white px-6 py-2 rounded-xl shadow hover:bg-blue-700">
+        Start
+      </button>
     </div>
 
     <!-- Chapters -->
     <div id="chapterSection" class="hidden">
-      <h2>Select a Chapter</h2>
-      <ul id="chapterList"></ul>
+      <h2 class="text-2xl font-semibold mb-4">Select a Chapter</h2>
+      <ul id="chapterList" class="space-y-3"></ul>
     </div>
 
     <!-- Quiz -->
     <div id="quizSection" class="hidden">
-      <div class="flex space-between">
-        <h2 id="chapterTitle"></h2>
-        <div id="timer"></div>
+      <div class="flex justify-between mb-4">
+        <h2 id="chapterTitle" class="text-xl font-semibold"></h2>
+        <div id="timer" class="text-lg font-bold text-red-600"></div>
       </div>
       <div class="flex">
-        <div class="w-75">
+        <div class="w-3/4 pr-4">
           <div id="questionContainer"></div>
-          <div class="flex space-between">
-            <button id="backBtn" onclick="prevQuestion()" class="btn-gray hidden">Back</button>
-            <button id="nextBtn" onclick="nextQuestion()" class="btn-blue">Next</button>
-            <button id="submitBtn" onclick="submitQuiz()" class="btn-green hidden">Submit</button>
+          <div class="flex justify-between mt-4">
+            <button id="backBtn" onclick="prevQuestion()" class="bg-gray-400 text-white px-4 py-2 rounded-lg hidden">Back</button>
+            <button id="nextBtn" onclick="nextQuestion()" class="bg-blue-600 text-white px-4 py-2 rounded-lg">Next</button>
+            <button id="submitBtn" onclick="submitQuiz()" class="bg-green-600 text-white px-4 py-2 rounded-lg hidden">Submit</button>
           </div>
         </div>
-        <div class="w-25">
-          <h3>Questions</h3>
-          <div id="questionNav" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;"></div>
+        <div class="w-1/4 pl-4">
+          <h3 class="font-semibold mb-2">Questions</h3>
+          <div id="questionNav" class="grid grid-cols-4 gap-2"></div>
         </div>
       </div>
     </div>
 
     <!-- Results -->
     <div id="resultSection" class="hidden text-center">
-      <h2>Results</h2>
-      <p id="scoreText"></p>
-      <div id="reviewContainer"></div>
-      <br>
-      <button onclick="backToChapters()" class="btn-indigo">Back to Chapters</button>
+      <h2 class="text-2xl font-bold mb-4">Results</h2>
+      <p id="scoreText" class="text-xl mb-4"></p>
+      <div id="reviewContainer" class="text-left"></div>
+      <button onclick="backToChapters()" class="mt-6 bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
+        Back to Chapters
+      </button>
     </div>
   </div>
 
   <script>
-    const APP_URL = "YOUR_APPS_SCRIPT_URL"; // Replace
-    let studentName = "", schoolName = "", currentChapter = "";
-    let questions = [], currentIndex = 0, answers = {};
+    const APP_URL = "YOUR_APPS_SCRIPT_DEPLOYED_URL"; // Replace with deployed script URL
+    let studentName = "", schoolName = "", currentChapter = "", questions = [], currentIndex = 0, answers = {};
     let timer, timeLeft = 0;
 
     function enterQuiz() {
       studentName = document.getElementById("studentName").value.trim();
       schoolName = document.getElementById("schoolName").value.trim();
-      if (!studentName || !schoolName) {
-        alert("Please enter your name and school name!");
-        return;
-      }
+      if (!studentName || !schoolName) { alert("Please enter both name and school!"); return; }
       document.getElementById("loginSection").classList.add("hidden");
       document.getElementById("chapterSection").classList.remove("hidden");
 
@@ -182,7 +93,7 @@
           list.innerHTML = "";
           data.chapters.forEach(ch => {
             const li = document.createElement("li");
-            li.innerHTML = `<button onclick="startChapter('${ch}')" class="btn-indigo" style="margin:6px 0;width:100%;">${ch}</button>`;
+            li.innerHTML = `<button onclick="startChapter('${ch}')" class="w-full bg-indigo-500 text-white py-2 px-4 rounded-lg shadow hover:bg-indigo-600">${ch}</button>`;
             list.appendChild(li);
           });
         })
@@ -214,12 +125,11 @@
       const container = document.getElementById("questionContainer");
       container.innerHTML = `
         <div class="question-card">
-          <p><b>Q${currentIndex + 1}.</b> ${q.question}</p>
+          <p class="font-semibold mb-3">Q${currentIndex + 1}. ${q.question}</p>
           ${q.options.map(opt => `
             <div class="option ${answers[currentIndex] === opt ? 'selected' : ''}" onclick="selectOption('${opt}')">${opt}</div>
           `).join("")}
-        </div>
-      `;
+        </div>`;
       document.getElementById("backBtn").classList.toggle("hidden", currentIndex === 0);
       document.getElementById("nextBtn").classList.toggle("hidden", currentIndex === questions.length - 1);
       document.getElementById("submitBtn").classList.toggle("hidden", currentIndex !== questions.length - 1);
@@ -231,91 +141,46 @@
       questions.forEach((_, i) => {
         const btn = document.createElement("button");
         btn.innerText = i + 1;
-        btn.className = answers[i] ? "answered" : "not-answered";
+        btn.className = "w-10 h-10 rounded-full " + (answers[i] ? "answered" : "not-answered");
         btn.onclick = () => { currentIndex = i; renderQuestion(); };
         nav.appendChild(btn);
       });
     }
 
-    function selectOption(opt) {
-      answers[currentIndex] = opt;
-      renderQuestion();
-      renderQuestionNav();
-    }
-
-    function nextQuestion() {
-      if (currentIndex < questions.length - 1) {
-        currentIndex++;
-        renderQuestion();
-      }
-    }
-
-    function prevQuestion() {
-      if (currentIndex > 0) {
-        currentIndex--;
-        renderQuestion();
-      }
-    }
+    function selectOption(opt) { answers[currentIndex] = opt; renderQuestion(); renderQuestionNav(); }
+    function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); } }
+    function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); } }
 
     function startTimer() {
-      clearInterval(timer);
-      updateTimer();
-      timer = setInterval(() => {
-        timeLeft--;
-        updateTimer();
-        if (timeLeft <= 0) {
-          clearInterval(timer);
-          submitQuiz();
-        }
-      }, 1000);
+      clearInterval(timer); updateTimer();
+      timer = setInterval(() => { timeLeft--; updateTimer(); if (timeLeft <= 0) { clearInterval(timer); submitQuiz(); } }, 1000);
     }
 
     function updateTimer() {
-      const min = Math.floor(timeLeft / 60);
-      const sec = timeLeft % 60;
+      const min = Math.floor(timeLeft / 60), sec = timeLeft % 60;
       document.getElementById("timer").innerText = `${min}:${sec.toString().padStart(2,'0')}`;
     }
 
     function submitQuiz() {
       clearInterval(timer);
-      let score = 0;
-      const review = [];
-
+      let score = 0, review = [];
       questions.forEach((q, i) => {
-        const chosen = answers[i];
-        const correct = q.correct;
+        const chosen = answers[i], correct = q.correct;
         if (chosen === correct) score++;
-
         review.push(`
           <div class="question-card">
-            <p><b>Q${i + 1}.</b> ${q.question}</p>
-            ${q.options.map(opt => `
-              <div class="option
-                ${opt === correct ? 'correct' : ''}
-                ${opt === chosen && chosen !== correct ? 'wrong' : ''}">
-                ${opt}
-              </div>
-            `).join("")}
-          </div>
-        `);
+            <p class="font-semibold mb-2">Q${i + 1}. ${q.question}</p>
+            ${q.options.map(opt => `<div class="option ${opt === correct ? 'correct' : ''} ${opt === chosen && chosen !== correct ? 'wrong' : ''}">${opt}</div>`).join("")}
+          </div>`);
       });
-
       document.getElementById("quizSection").classList.add("hidden");
       document.getElementById("resultSection").classList.remove("hidden");
       document.getElementById("scoreText").innerText = `You scored ${score} out of ${questions.length}`;
       document.getElementById("reviewContainer").innerHTML = review.join("");
 
-      // Save to Google Sheets
       fetch(APP_URL, {
         method: "POST",
-        body: JSON.stringify({ 
-          name: studentName, 
-          school: schoolName,
-          chapter: currentChapter, 
-          score, 
-          answers,
-          total: questions.length
-        })
+        body: JSON.stringify({ name: studentName, school: schoolName, chapter: currentChapter, score, answers })
       });
     }
 
