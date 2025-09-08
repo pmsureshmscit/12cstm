@@ -5,6 +5,37 @@
   <title>Chapter Quiz</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    body {
+      visibility: hidden;
+    }
+    body.loaded {
+      visibility: visible;
+    }
+
+    /* Spinner */
+    #loader {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      z-index: 9999;
+    }
+    .spinner {
+      border: 8px solid #e5e7eb;
+      border-top: 8px solid #2563eb;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     .option {
       padding: 10px;
       border: 1px solid #ccc;
@@ -31,17 +62,20 @@
       margin-bottom: 20px;
     }
     .answered {
-      background-color: #22c55e; /* green */
+      background-color: #22c55e;
       color: white;
     }
     .not-answered {
-      background-color: #e5e7eb; /* gray */
+      background-color: #e5e7eb;
     }
   </style>
 </head>
 <body class="bg-white min-h-screen p-6">
 
-  <div id="app" class="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
+  <!-- Loader -->
+  <div id="loader"><div class="spinner"></div></div>
+
+  <div id="app" class="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-lg hidden">
     <h1 class="text-3xl font-bold mb-2 text-center text-blue-900">GOVT. BOYS HR. SEC. SCHOOL</h1>
     <h2 class="text-2xl font-semibold mb-2 text-center text-blue-800">PODATURPET - 631208</h2>
     <h2 class="text-2xl font-semibold mb-6 text-center text-blue-800">TIRUVALLUR DISTRICT</h2>
@@ -50,27 +84,32 @@
       12TH STANDARD COMPUTER SCIENCE <br>
       <span class="text-blue-700">TAMIL MEDIUM – BOOK BACK ONE MARKS QUIZ</span>
     </h1>
+
+    <!-- Login -->
     <div id="loginSection" class="text-center">
       <input id="studentName" type="text" placeholder="Enter your name"
-             class="border p-2 rounded w-1/2 mb-4">
+             class="border p-2 rounded w-1/2 mb-4 block mx-auto">
+      <input id="schoolName" type="text" placeholder="Enter your school name"
+             class="border p-2 rounded w-1/2 mb-4 block mx-auto">
       <button onclick="enterQuiz()" 
               class="bg-blue-600 text-white px-6 py-2 rounded-xl shadow hover:bg-blue-700">
         Start
       </button>
     </div>
 
+    <!-- Chapter Selection -->
     <div id="chapterSection" class="hidden">
       <h2 class="text-2xl font-semibold mb-4">Select a Chapter</h2>
       <ul id="chapterList" class="space-y-3"></ul>
     </div>
 
+    <!-- Quiz Section -->
     <div id="quizSection" class="hidden">
       <div class="flex justify-between mb-4">
         <h2 id="chapterTitle" class="text-xl font-semibold"></h2>
         <div id="timer" class="text-lg font-bold text-red-600"></div>
       </div>
       <div class="flex">
-        <!-- Left: Question display -->
         <div class="w-3/4 pr-4">
           <div id="questionContainer"></div>
           <div class="flex justify-between mt-4">
@@ -82,7 +121,6 @@
                     class="bg-green-600 text-white px-4 py-2 rounded-lg hidden">Submit</button>
           </div>
         </div>
-        <!-- Right: Question navigation -->
         <div class="w-1/4 pl-4">
           <h3 class="font-semibold mb-2">Questions</h3>
           <div id="questionNav" class="grid grid-cols-4 gap-2"></div>
@@ -90,16 +128,22 @@
       </div>
     </div>
 
+    <!-- Results -->
     <div id="resultSection" class="hidden text-center">
       <h2 class="text-2xl font-bold mb-4">Results</h2>
       <p id="scoreText" class="text-xl mb-4"></p>
       <div id="reviewContainer" class="text-left"></div>
+      <button onclick="backToChapters()" 
+              class="mt-6 bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
+        Back to Chapters
+      </button>
     </div>
   </div>
 
   <script>
-    const APP_URL = "https://script.google.com/macros/s/AKfycbySv6MgUk6qntlbJnYd9sOoruonZQSChDibk9P7TnQ9sXGH7pUIpuhndRAIJkeu2A8E/exec"; // Replace with Apps Script URL
+    const APP_URL = "https://script.google.com/macros/s/AKfycbySv6MgUk6qntlbJnYd9sOoruonZQSChDibk9P7TnQ9sXGH7pUIpuhndRAIJkeu2A8E/exec";
     let studentName = "";
+    let schoolName = "";
     let currentChapter = "";
     let questions = [];
     let currentIndex = 0;
@@ -108,8 +152,9 @@
 
     function enterQuiz() {
       studentName = document.getElementById("studentName").value.trim();
-      if (!studentName) {
-        alert("Please enter your name!");
+      schoolName = document.getElementById("schoolName").value.trim();
+      if (!studentName || !schoolName) {
+        alert("Please enter both your name and school name!");
         return;
       }
       document.getElementById("loginSection").classList.add("hidden");
@@ -143,7 +188,7 @@
           questions = data.questions;
           currentIndex = 0;
           answers = {};
-          timeLeft = questions.length * 60; // 1 min per question
+          timeLeft = questions.length * 60;
           startTimer();
           renderQuestion();
           renderQuestionNav();
@@ -246,7 +291,7 @@
       document.getElementById("quizSection").classList.add("hidden");
       document.getElementById("resultSection").classList.remove("hidden");
       document.getElementById("scoreText").innerText = 
-        `You scored ${score} out of ${questions.length}`;
+        `${studentName} (${schoolName}), you scored ${score} out of ${questions.length}`;
       document.getElementById("reviewContainer").innerHTML = review.join("");
 
       // Save to Google Sheets
@@ -254,12 +299,25 @@
         method: "POST",
         body: JSON.stringify({ 
           name: studentName, 
+          school: schoolName,
           chapter: currentChapter, 
           score, 
           answers 
         })
       });
     }
+
+    function backToChapters() {
+      document.getElementById("resultSection").classList.add("hidden");
+      document.getElementById("chapterSection").classList.remove("hidden");
+    }
+
+    // Hide loader & show app once page fully loaded
+    window.onload = () => {
+      document.body.classList.add("loaded");
+      document.getElementById("loader").style.display = "none";
+      document.getElementById("app").classList.remove("hidden");
+    };
   </script>
 </body>
 </html>
