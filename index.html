@@ -294,21 +294,17 @@
       document.getElementById("scoreText").innerText = `You scored ${score} out of ${questions.length}`;
       document.getElementById("reviewContainer").innerHTML = review.join("");
 
-      // In submitQuiz() function
-fetch(APP_URL, {
+   fetch(APP_URL, {
   method: "POST",
-  headers: { "Content-Type": "application/json" },  // <-- add this line
   body: JSON.stringify({ 
     name: studentName,
-    school: schoolName,
+    school: schoolName,   // <-- this line ensures school is sent
     chapter: currentChapter,
     score,
     total: questions.length,
     answers
   })
 });
-
-
     }
 
     // Back to chapters
@@ -324,5 +320,6 @@ fetch(APP_URL, {
   </script>
 </body>
 </html>
+
 
 
