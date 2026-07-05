@@ -1,145 +1,433 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Chapter Quiz</title>
-  <style>
-    body {
-      background: #fff;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    h1, h2 {
-      margin: 6px 0;
-      text-align: center;
-    }
-    hr {
-      border: 0;
-      border-top: 4px solid #dc2626;
-      margin: 20px 0;
-    }
-    input[type="text"] {
-      padding: 10px;
-      width: 50%;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      margin-bottom: 10px;
-    }
-    button {
-      padding: 10px 18px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 15px;
-    }
-    .btn-blue { background: #2563eb; color: white; }
-    .btn-blue:hover { background: #1d4ed8; }
-    .btn-green { background: #16a34a; color: white; }
-    .btn-green:hover { background: #15803d; }
-    .btn-gray { background: #6b7280; color: white; }
-    .btn-indigo { background: #4f46e5; color: white; }
-    .btn-indigo:hover { background: #4338ca; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12th CS Tamil Medium — Book Back Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF8F2;
+    --paper-alt:#F1EBDB;
+    --card:#FFFFFF;
+    --ink:#1C2333;
+    --ink-soft:#5B6274;
+    --ink-faint:#8B8F9E;
+    --line:#E5DCC4;
+    --seal:#AE1C24;
+    --seal-dark:#841217;
+    --seal-tint:#FBEAEA;
+    --gold:#C08A22;
+    --gold-tint:#FBF1DC;
+    --correct:#1E8E4F;
+    --correct-tint:#E7F6ED;
+    --wrong:#C2382C;
+    --wrong-tint:#FBEBE9;
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:10px;
+    --shadow-card:0 1px 2px rgba(28,35,51,0.04), 0 8px 24px rgba(28,35,51,0.06);
+    --shadow-pop:0 4px 10px rgba(28,35,51,0.10), 0 14px 34px rgba(28,35,51,0.10);
+    --font-display:'Bitter', Georgia, serif;
+    --font-body:'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono:'JetBrains Mono', 'Courier New', monospace;
+  }
 
-    .hidden { display: none; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 100% 0%, rgba(174,28,36,0.05), transparent 45%),
+      radial-gradient(circle at 0% 100%, rgba(192,138,34,0.06), transparent 45%);
+    font-family:var(--font-body);
+    color:var(--ink);
+    min-height:100vh;
+    padding:20px 14px 60px;
+  }
 
-    .option {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      margin: 6px 0;
-      cursor: pointer;
-    }
-    .option.selected { background: #cbd5e1; }
-    .option.correct { background: #22c55e; color: #fff; }
-    .option.wrong { background: #ef4444; color: #fff; }
+  button{ font-family:inherit; }
+  :focus-visible{ outline:2.5px solid var(--seal); outline-offset:2px; border-radius:6px; }
 
-    .question-card {
-      background: #fff;
-      padding: 16px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-      margin-bottom: 20px;
-    }
-    .answered { background: #22c55e; color: #fff; }
-    .not-answered { background: #e5e7eb; }
+  .wrap{ max-width:1080px; margin:0 auto; }
 
-    .question-nav {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-    }
-    .question-nav button {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-    }
-    #timer { font-weight: bold; color: #dc2626; }
-  </style>
+  /* ---------- Admit-card header ---------- */
+  .admit-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-card);
+    padding:22px 26px;
+    margin-bottom:22px;
+    position:relative;
+    overflow:hidden;
+  }
+  .admit-card::before{
+    content:"";
+    position:absolute; inset:0 0 auto 0; height:6px;
+    background:repeating-linear-gradient(90deg, var(--seal) 0 18px, var(--gold) 18px 36px);
+    opacity:0.9;
+  }
+  .admit-top{
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+    padding-top:8px;
+  }
+  .seal-emblem{
+    width:56px; height:56px; flex:none; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #d43c3c, var(--seal-dark));
+    color:#fff; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-weight:800; font-size:20px;
+    border:3px solid var(--gold-tint);
+    box-shadow:0 3px 8px rgba(174,28,36,0.35);
+  }
+  .admit-titles{ flex:1; min-width:200px; }
+  .school-name{
+    font-family:var(--font-display); font-weight:700; font-size:clamp(18px,3vw,24px);
+    color:var(--ink); margin:0; letter-spacing:0.2px;
+  }
+  .school-sub{
+    font-size:13px; color:var(--ink-soft); margin:2px 0 0; letter-spacing:0.5px;
+    text-transform:uppercase; font-weight:600;
+  }
+  .quiz-eyebrow{
+    display:inline-block; margin-top:10px; font-size:11.5px; font-weight:700;
+    letter-spacing:1px; text-transform:uppercase; color:var(--seal);
+    background:var(--seal-tint); padding:4px 10px; border-radius:20px;
+  }
+  .quiz-title{
+    font-family:var(--font-display); font-size:clamp(20px,3.4vw,28px);
+    margin:10px 0 0; color:var(--ink); font-weight:800; line-height:1.25;
+  }
+  .quiz-title small{
+    display:block; font-family:var(--font-body); font-weight:600; font-size:14px;
+    color:var(--ink-soft); text-transform:none; margin-top:4px; letter-spacing:0.2px;
+  }
+
+  .hidden{ display:none !important; }
+
+  /* ---------- Panels ---------- */
+  .panel{
+    background:var(--card); border:1px solid var(--line);
+    border-radius:var(--radius-lg); box-shadow:var(--shadow-card);
+    padding:26px; animation:riseIn 0.35s ease;
+  }
+  @keyframes riseIn{
+    from{ opacity:0; transform:translateY(8px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  /* ---------- Login ---------- */
+  .login-panel{ max-width:440px; margin:0 auto; text-align:center; }
+  .login-panel h2{
+    font-family:var(--font-display); font-size:20px; margin:0 0 4px;
+  }
+  .login-panel p.helper{ color:var(--ink-soft); font-size:14px; margin:0 0 20px; }
+  .field{ text-align:left; margin-bottom:14px; }
+  .field label{
+    display:block; font-size:12.5px; font-weight:700; color:var(--ink-soft);
+    text-transform:uppercase; letter-spacing:0.6px; margin-bottom:6px;
+  }
+  input[type="text"]{
+    width:100%; padding:12px 14px; border:1.5px solid var(--line);
+    border-radius:var(--radius-sm); font-size:15px; font-family:inherit;
+    background:var(--paper); color:var(--ink); transition:border-color .15s, box-shadow .15s;
+  }
+  input[type="text"]:focus{
+    border-color:var(--seal); box-shadow:0 0 0 3px var(--seal-tint); outline:none;
+  }
+  input[type="text"]::placeholder{ color:var(--ink-faint); }
+
+  .btn{
+    border:none; border-radius:12px; cursor:pointer; font-weight:700; font-size:15px;
+    padding:12px 22px; transition:transform .12s ease, box-shadow .12s ease, background .15s;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .btn:active{ transform:scale(0.97); }
+  .btn-seal{ background:var(--seal); color:#fff; box-shadow:0 4px 12px rgba(174,28,36,0.28); width:100%; }
+  .btn-seal:hover{ background:var(--seal-dark); }
+  .btn-ghost{ background:var(--paper-alt); color:var(--ink); }
+  .btn-ghost:hover{ background:#e9e1cb; }
+  .btn-gold{ background:var(--gold); color:#fff; box-shadow:0 4px 12px rgba(192,138,34,0.3); }
+  .btn-gold:hover{ background:#a5750f; }
+  .btn:disabled{ opacity:0.45; cursor:not-allowed; transform:none; }
+
+  /* ---------- Chapters ---------- */
+  .section-heading{
+    font-family:var(--font-display); font-size:19px; margin:0 0 4px; color:var(--ink);
+  }
+  .section-sub{ color:var(--ink-soft); font-size:13.5px; margin:0 0 18px; }
+  .chapter-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr));
+    gap:14px; list-style:none; padding:0; margin:0;
+  }
+  .chapter-card{
+    background:var(--paper); border:1.5px solid var(--line); border-radius:var(--radius-md);
+    padding:16px; cursor:pointer; text-align:left; width:100%;
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    font-family:inherit; display:flex; flex-direction:column; gap:8px;
+  }
+  .chapter-card:hover{
+    transform:translateY(-3px); box-shadow:var(--shadow-pop); border-color:var(--gold);
+  }
+  .chapter-tag{
+    font-family:var(--font-mono); font-size:11px; color:var(--seal); font-weight:700;
+    letter-spacing:0.5px;
+  }
+  .chapter-name{ font-weight:700; font-size:15px; color:var(--ink); line-height:1.35; }
+  .chapter-arrow{ align-self:flex-end; color:var(--gold); font-size:18px; }
+
+  .skeleton-row{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:14px;
+  }
+  .skeleton-card{
+    height:88px; border-radius:var(--radius-md);
+    background:linear-gradient(90deg, var(--paper-alt) 25%, #f8f3e5 37%, var(--paper-alt) 63%);
+    background-size:400% 100%; animation:shimmer 1.4s ease infinite;
+  }
+  @keyframes shimmer{ 0%{background-position:100% 0} 100%{background-position:-100% 0} }
+
+  .error-box{
+    background:var(--wrong-tint); border:1.5px solid var(--wrong); color:var(--wrong);
+    border-radius:var(--radius-md); padding:16px; font-size:14px; text-align:center;
+  }
+  .error-box .btn{ margin-top:10px; }
+
+  /* ---------- Quiz layout ---------- */
+  .quiz-shell{ display:flex; gap:20px; align-items:flex-start; }
+  .quiz-main{ flex:1; min-width:0; }
+  .quiz-side{ width:230px; flex:none; }
+
+  .quiz-topbar{
+    display:flex; justify-content:space-between; align-items:center; gap:12px;
+    margin-bottom:14px; flex-wrap:wrap;
+  }
+  .quiz-chapter-name{ font-family:var(--font-display); font-size:18px; margin:0; }
+  .timer-chip{
+    font-family:var(--font-mono); font-weight:700; font-size:17px;
+    background:var(--ink); color:#fff; padding:8px 14px; border-radius:10px;
+    letter-spacing:1px; transition:background .3s;
+  }
+  .timer-chip.low{ background:var(--seal); animation:pulseTimer 1s ease infinite; }
+  @keyframes pulseTimer{ 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+  .progress-track{
+    height:8px; border-radius:6px; background:var(--paper-alt); overflow:hidden; margin-bottom:18px;
+  }
+  .progress-fill{
+    height:100%; background:linear-gradient(90deg, var(--gold), var(--seal));
+    border-radius:6px; transition:width .3s ease;
+  }
+
+  .question-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-card); padding:24px; margin-bottom:16px; animation:riseIn .3s ease;
+  }
+  .q-index{
+    font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--seal);
+    letter-spacing:0.5px; margin-bottom:8px; display:block;
+  }
+  .q-text{ font-size:16.5px; font-weight:600; line-height:1.5; margin:0 0 18px; color:var(--ink); }
+
+  .bubble-option{
+    display:flex; align-items:center; gap:12px; padding:12px 14px;
+    border:1.5px solid var(--line); border-radius:var(--radius-md);
+    margin-bottom:10px; cursor:pointer; background:var(--paper);
+    transition:border-color .15s, background .15s, transform .1s;
+  }
+  .bubble-option:hover{ border-color:var(--gold); }
+  .bubble-option:active{ transform:scale(0.99); }
+  .bubble-letter{
+    width:30px; height:30px; flex:none; border-radius:50%;
+    border:2px solid var(--ink-faint); display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:13px; color:var(--ink-soft);
+    transition:all .18s cubic-bezier(.34,1.56,.64,1); background:#fff;
+  }
+  .bubble-text{ font-size:15px; color:var(--ink); line-height:1.4; }
+
+  .bubble-option.selected{
+    border-color:var(--seal); background:var(--seal-tint);
+  }
+  .bubble-option.selected .bubble-letter{
+    background:var(--seal); border-color:var(--seal); color:#fff; transform:scale(1.12);
+  }
+
+  .bubble-option.correct{ border-color:var(--correct); background:var(--correct-tint); }
+  .bubble-option.correct .bubble-letter{ background:var(--correct); border-color:var(--correct); color:#fff; }
+  .bubble-option.wrong{ border-color:var(--wrong); background:var(--wrong-tint); }
+  .bubble-option.wrong .bubble-letter{ background:var(--wrong); border-color:var(--wrong); color:#fff; }
+
+  .quiz-nav-row{ display:flex; justify-content:space-between; gap:10px; margin-top:6px; }
+
+  /* ---------- Side palette ---------- */
+  .side-panel{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-card); padding:18px; position:sticky; top:20px;
+  }
+  .side-title{
+    font-size:12.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px;
+    color:var(--ink-soft); margin:0 0 12px;
+  }
+  .question-nav{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:16px; }
+  .question-nav button{
+    width:36px; height:36px; border-radius:50%; border:1.5px solid var(--line);
+    background:var(--paper); font-family:var(--font-mono); font-weight:700; font-size:13px;
+    color:var(--ink-soft); cursor:pointer; transition:all .15s;
+  }
+  .question-nav button.answered{ background:var(--correct); border-color:var(--correct); color:#fff; }
+  .question-nav button.current{ box-shadow:0 0 0 3px var(--seal-tint); border-color:var(--seal); }
+  .legend{ display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--ink-soft); }
+  .legend-dot{ width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:6px; }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(28,35,51,0.55); display:flex;
+    align-items:center; justify-content:center; padding:20px; z-index:50;
+  }
+  .modal-box{
+    background:var(--card); border-radius:var(--radius-lg); padding:26px; max-width:380px;
+    box-shadow:var(--shadow-pop); text-align:center; animation:riseIn .2s ease;
+  }
+  .modal-box h3{ font-family:var(--font-display); margin:0 0 8px; font-size:19px; }
+  .modal-box p{ color:var(--ink-soft); font-size:14px; margin:0 0 18px; }
+  .modal-actions{ display:flex; gap:10px; }
+  .modal-actions .btn{ flex:1; }
+
+  /* ---------- Results ---------- */
+  .result-card{
+    background:var(--card); border:2px solid var(--gold); border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-pop); padding:30px; text-align:center; max-width:480px; margin:0 auto 24px;
+    position:relative; overflow:hidden;
+  }
+  .result-card::before{
+    content:""; position:absolute; inset:0 0 auto 0; height:5px;
+    background:repeating-linear-gradient(90deg, var(--gold) 0 18px, var(--seal) 18px 36px);
+  }
+  .result-medal{
+    width:64px; height:64px; margin:6px auto 10px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #e8bd4e, var(--gold));
+    display:flex; align-items:center; justify-content:center; font-size:28px; color:#fff;
+    box-shadow:0 4px 10px rgba(192,138,34,0.4);
+  }
+  .result-score{
+    font-family:var(--font-mono); font-weight:700; font-size:38px; color:var(--ink); margin:4px 0;
+  }
+  .result-label{ color:var(--ink-soft); font-size:14px; margin:0 0 4px; }
+  .result-chapter{ font-family:var(--font-display); font-size:16px; color:var(--seal); margin:0; }
+
+  .review-heading{
+    font-family:var(--font-display); font-size:17px; margin:26px 0 12px; text-align:left;
+  }
+
+  .footer-note{ text-align:center; color:var(--ink-faint); font-size:12px; margin-top:30px; }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 760px){
+    body{ padding:14px 10px 50px; }
+    .admit-card{ padding:18px 16px; }
+    .seal-emblem{ width:46px; height:46px; font-size:16px; }
+    .panel{ padding:18px; }
+    .quiz-shell{ flex-direction:column; }
+    .quiz-side{ width:100%; }
+    .side-panel{ position:static; }
+    .question-nav{ grid-template-columns:repeat(6,1fr); }
+    .quiz-nav-row .btn{ flex:1; }
+    .result-card{ padding:22px 18px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1 style="color:#1e3a8a;">GOVT. BOYS HR. SEC. SCHOOL</h1>
-    <h2 style="color:#1e40af;">PODATURPET - 631208</h2>
-    <h2 style="color:#1e40af;">TIRUVALLUR DISTRICT</h2>
-    <hr>
-    <h1 style="color:#111827;">
-      12TH STANDARD COMPUTER SCIENCE <br>
-      <span style="color:#1d4ed8;">TAMIL MEDIUM – BOOK BACK ONE MARKS QUIZ</span>
-    </h1>
+  <div class="wrap">
+
+    <!-- ADMIT-CARD HEADER -->
+    <div class="admit-card">
+      <div class="admit-top">
+        <div class="seal-emblem">CS</div>
+        <div class="admit-titles">
+          <p class="school-name">Govt. Boys Hr. Sec. School</p>
+          <p class="school-sub">Podaturpet · 631208 · Tiruvallur District</p>
+        </div>
+      </div>
+      <span class="quiz-eyebrow">Book Back One Marks</span>
+      <h1 class="quiz-title">12th Standard Computer Science
+        <small>Tamil Medium — Chapter-wise Practice Quiz</small>
+      </h1>
+    </div>
 
     <!-- LOGIN SECTION -->
-    <div id="loginSection" class="text-center" style="text-align:center;">
-      <input id="studentName" type="text" placeholder="Enter your name"><br>
-      <input id="schoolName" type="text" placeholder="Enter your School name"><br>
-      <button onclick="enterQuiz()" class="btn-blue">Start</button>
+    <div id="loginSection" class="panel login-panel">
+      <h2>Enter your details</h2>
+      <p class="helper">This fills your admit card for today's practice test.</p>
+      <div class="field">
+        <label for="studentName">Student Name</label>
+        <input id="studentName" type="text" placeholder="e.g. Karthik R">
+      </div>
+      <div class="field">
+        <label for="schoolName">School Name</label>
+        <input id="schoolName" type="text" placeholder="e.g. Govt. Boys Hr. Sec. School">
+      </div>
+      <button onclick="enterQuiz()" class="btn btn-seal">Start ➜</button>
     </div>
 
     <!-- CHAPTER SELECTION -->
-    <div id="chapterSection" class="hidden">
-      <h2>Select a Chapter</h2>
-      <ul id="chapterList" style="list-style:none; padding:0;"></ul>
+    <div id="chapterSection" class="panel hidden">
+      <h2 class="section-heading">Choose a chapter</h2>
+      <p class="section-sub">Pick any chapter to begin its one-mark quiz.</p>
+      <div id="chapterList" class="chapter-grid"></div>
     </div>
 
     <!-- QUIZ SECTION -->
     <div id="quizSection" class="hidden">
-      <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-        <h2 id="chapterTitle"></h2>
-        <div id="timer"></div>
+      <div class="quiz-topbar">
+        <h2 id="chapterTitle" class="quiz-chapter-name"></h2>
+        <div id="timer" class="timer-chip">0:00</div>
       </div>
-      <div style="display:flex;">
-        <div style="width:75%; padding-right:12px;">
+      <div class="progress-track"><div id="progressFill" class="progress-fill" style="width:0%"></div></div>
+
+      <div class="quiz-shell">
+        <div class="quiz-main">
           <div id="questionContainer"></div>
-          <div style="display:flex; justify-content:space-between; margin-top:10px;">
-            <button id="backBtn" onclick="prevQuestion()" class="btn-gray hidden">Back</button>
-            <button id="nextBtn" onclick="nextQuestion()" class="btn-blue">Next</button>
-            <button id="submitBtn" onclick="submitQuiz()" class="btn-green hidden">Submit</button>
+          <div class="quiz-nav-row">
+            <button id="backBtn" onclick="prevQuestion()" class="btn btn-ghost hidden">← Back</button>
+            <button id="nextBtn" onclick="nextQuestion()" class="btn btn-seal">Next →</button>
+            <button id="submitBtn" onclick="confirmSubmit()" class="btn btn-gold hidden">Submit Quiz</button>
           </div>
         </div>
-        <div style="width:25%; padding-left:12px;">
-          <h3>Questions</h3>
-          <div id="questionNav" class="question-nav"></div>
+
+        <div class="quiz-side">
+          <div class="side-panel">
+            <p class="side-title">Question Map</p>
+            <div id="questionNav" class="question-nav"></div>
+            <div class="legend">
+              <span><span class="legend-dot" style="background:var(--correct)"></span>Answered</span>
+              <span><span class="legend-dot" style="background:var(--paper-alt); border:1px solid var(--line)"></span>Not answered</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- RESULTS SECTION -->
-    <div id="resultSection" class="hidden" style="text-align:center;">
-      <h2>Results</h2>
-      <p id="scoreText"></p>
-      <div id="reviewContainer" style="text-align:left; margin-bottom:15px;"></div>
-      <button id="backToChaptersBtn" class="btn-indigo">Back to Chapters</button>
+    <div id="resultSection" class="hidden">
+      <div class="result-card">
+        <div class="result-medal">🏅</div>
+        <p class="result-label">Your Score</p>
+        <p id="scoreText" class="result-score">0 / 0</p>
+        <p id="resultChapter" class="result-chapter"></p>
+      </div>
+      <h3 class="review-heading">Answer Review</h3>
+      <div id="reviewContainer"></div>
+      <div style="text-align:center; margin-top:20px;">
+        <button id="backToChaptersBtn" class="btn btn-seal">Back to Chapters</button>
+      </div>
     </div>
+
+    <p class="footer-note">GOVT. BOYS HR. SEC. SCHOOL · PODATURPET · TIRUVALLUR DISTRICT</p>
   </div>
 
   <script>
@@ -151,6 +439,7 @@
     let currentIndex = 0;
     let answers = {};
     let timer, timeLeft = 0;
+    const LETTERS = ["A","B","C","D","E","F"];
 
     function enterQuiz() {
       studentName = document.getElementById("studentName").value.trim();
@@ -161,20 +450,39 @@
       }
       document.getElementById("loginSection").classList.add("hidden");
       document.getElementById("chapterSection").classList.remove("hidden");
+      loadChapters();
+    }
+
+    function loadChapters() {
+      const list = document.getElementById("chapterList");
+      list.className = "skeleton-row";
+      list.innerHTML = `
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>`;
 
       fetch(APP_URL + "?mode=chapters")
         .then(r => r.json())
         .then(data => {
-          const list = document.getElementById("chapterList");
+          list.className = "chapter-grid";
           list.innerHTML = "";
-          data.chapters.forEach(ch => {
-            const li = document.createElement("li");
-            li.innerHTML = `<button onclick="startChapter('${ch}')" 
-              class="btn-indigo" style="width:100%; margin:4px 0; padding:8px;">${ch}</button>`;
-            list.appendChild(li);
+          data.chapters.forEach((ch, i) => {
+            const btn = document.createElement("button");
+            btn.className = "chapter-card";
+            btn.innerHTML = `
+              <span class="chapter-tag">CHAPTER ${String(i + 1).padStart(2,'0')}</span>
+              <span class="chapter-name">${ch}</span>
+              <span class="chapter-arrow">➜</span>`;
+            btn.onclick = () => startChapter(ch);
+            list.appendChild(btn);
           });
         })
-        .catch(err => alert("Error loading chapters: " + err));
+        .catch(() => {
+          list.className = "";
+          list.innerHTML = `<div class="error-box">Couldn't load chapters. Please check your connection.
+            <br><button class="btn btn-ghost" onclick="loadChapters()">Retry</button></div>`;
+        });
     }
 
     function startChapter(chapter) {
@@ -182,6 +490,8 @@
       document.getElementById("chapterSection").classList.add("hidden");
       document.getElementById("quizSection").classList.remove("hidden");
       document.getElementById("chapterTitle").innerText = chapter;
+      document.getElementById("questionContainer").innerHTML = `
+        <div class="question-card"><div class="skeleton-card" style="height:160px;"></div></div>`;
 
       fetch(APP_URL + "?mode=questions&chapter=" + encodeURIComponent(chapter))
         .then(r => r.json())
@@ -194,7 +504,11 @@
           renderQuestion();
           renderQuestionNav();
         })
-        .catch(err => alert("Error loading questions: " + err));
+        .catch(() => {
+          document.getElementById("questionContainer").innerHTML = `
+            <div class="error-box">Couldn't load questions for this chapter.
+              <br><button class="btn btn-ghost" onclick="startChapter('${chapter}')">Retry</button></div>`;
+        });
     }
 
     function renderQuestion() {
@@ -202,16 +516,21 @@
       const container = document.getElementById("questionContainer");
       container.innerHTML = `
         <div class="question-card">
-          <p><b>Q${currentIndex + 1}.</b> ${q.question}</p>
-          ${q.options.map(opt => `
-            <div class="option ${answers[currentIndex] === opt ? 'selected' : ''}" 
-              onclick="selectOption('${opt}')">${opt}</div>
+          <span class="q-index">QUESTION ${currentIndex + 1} OF ${questions.length}</span>
+          <p class="q-text">${q.question}</p>
+          ${q.options.map((opt, i) => `
+            <div class="bubble-option ${answers[currentIndex] === opt ? 'selected' : ''}"
+              onclick="selectOption('${opt.replace(/'/g, "\\'")}')">
+              <span class="bubble-letter">${LETTERS[i] || i + 1}</span>
+              <span class="bubble-text">${opt}</span>
+            </div>
           `).join("")}
         </div>
       `;
       document.getElementById("backBtn").classList.toggle("hidden", currentIndex === 0);
       document.getElementById("nextBtn").classList.toggle("hidden", currentIndex === questions.length - 1);
       document.getElementById("submitBtn").classList.toggle("hidden", currentIndex !== questions.length - 1);
+      updateProgress();
     }
 
     function renderQuestionNav() {
@@ -220,10 +539,18 @@
       questions.forEach((_, i) => {
         const btn = document.createElement("button");
         btn.innerText = i + 1;
-        btn.className = answers[i] ? "answered" : "not-answered";
-        btn.onclick = () => { currentIndex = i; renderQuestion(); };
+        btn.className = (answers[i] ? "answered " : "") + (i === currentIndex ? "current" : "");
+        btn.onclick = () => { currentIndex = i; renderQuestion(); renderQuestionNav(); };
         nav.appendChild(btn);
       });
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const answeredCount = Object.keys(answers).length;
+      const pct = questions.length ? Math.round((answeredCount / questions.length) * 100) : 0;
+      const fill = document.getElementById("progressFill");
+      if (fill) fill.style.width = pct + "%";
     }
 
     function selectOption(opt) {
@@ -236,6 +563,7 @@
       if (currentIndex < questions.length - 1) {
         currentIndex++;
         renderQuestion();
+        renderQuestionNav();
       }
     }
 
@@ -243,6 +571,7 @@
       if (currentIndex > 0) {
         currentIndex--;
         renderQuestion();
+        renderQuestionNav();
       }
     }
 
@@ -262,7 +591,29 @@
     function updateTimer() {
       const min = Math.floor(timeLeft / 60);
       const sec = timeLeft % 60;
-      document.getElementById("timer").innerText = `${min}:${sec.toString().padStart(2,'0')}`;
+      const chip = document.getElementById("timer");
+      chip.innerText = `${min}:${sec.toString().padStart(2,'0')}`;
+      chip.classList.toggle("low", timeLeft <= 60);
+    }
+
+    function confirmSubmit() {
+      const unanswered = questions.length - Object.keys(answers).length;
+      const overlay = document.createElement("div");
+      overlay.className = "modal-overlay";
+      overlay.innerHTML = `
+        <div class="modal-box">
+          <h3>Submit quiz?</h3>
+          <p>${unanswered > 0
+              ? `You still have <b>${unanswered}</b> unanswered question${unanswered > 1 ? 's' : ''}. Submit anyway?`
+              : `You've answered every question. Ready to submit?`}</p>
+          <div class="modal-actions">
+            <button class="btn btn-ghost" id="cancelSubmitBtn">Keep Reviewing</button>
+            <button class="btn btn-seal" id="okSubmitBtn">Submit</button>
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+      document.getElementById("cancelSubmitBtn").onclick = () => overlay.remove();
+      document.getElementById("okSubmitBtn").onclick = () => { overlay.remove(); submitQuiz(); };
     }
 
     function submitQuiz() {
@@ -277,12 +628,14 @@
 
         review.push(`
           <div class="question-card">
-            <p><b>Q${i + 1}.</b> ${q.question}</p>
-            ${q.options.map(opt => `
-              <div class="option
+            <span class="q-index">QUESTION ${i + 1}</span>
+            <p class="q-text">${q.question}</p>
+            ${q.options.map((opt, j) => `
+              <div class="bubble-option
                 ${opt === correct ? 'correct' : ''}
                 ${opt === chosen && chosen !== correct ? 'wrong' : ''}">
-                ${opt}
+                <span class="bubble-letter">${LETTERS[j] || j + 1}</span>
+                <span class="bubble-text">${opt}</span>
               </div>
             `).join("")}
           </div>
@@ -291,20 +644,21 @@
 
       document.getElementById("quizSection").classList.add("hidden");
       document.getElementById("resultSection").classList.remove("hidden");
-      document.getElementById("scoreText").innerText = `You scored ${score} out of ${questions.length}`;
+      document.getElementById("scoreText").innerText = `${score} / ${questions.length}`;
+      document.getElementById("resultChapter").innerText = currentChapter;
       document.getElementById("reviewContainer").innerHTML = review.join("");
 
-   fetch(APP_URL, {
-  method: "POST",
-  body: JSON.stringify({ 
-    name: studentName,
-    school: schoolName,   // <-- this line ensures school is sent
-    chapter: currentChapter,
-    score,
-    total: questions.length,
-    answers
-  })
-});
+      fetch(APP_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          name: studentName,
+          school: schoolName,
+          chapter: currentChapter,
+          score,
+          total: questions.length,
+          answers
+        })
+      });
     }
 
     // Back to chapters
@@ -316,10 +670,8 @@
       currentIndex = 0;
       answers = {};
       clearInterval(timer);
+      loadChapters();
     };
   </script>
 </body>
 </html>
-
-
-
