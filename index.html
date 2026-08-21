@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ta">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>12th CS Quiz — Level Up</title>
+<title>12th CS Quiz — AI Level Up</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg-deep:#0B0E1F;
@@ -31,6 +31,7 @@
     --radius-sm:12px;
     --font-display:'Space Grotesk', sans-serif;
     --font-body:'Inter', sans-serif;
+    --font-tamil:'Noto Sans Tamil', sans-serif;
     --font-mono:'JetBrains Mono', monospace;
     --shadow-card:0 8px 30px rgba(0,0,0,0.35);
     --glow-cyan:0 0 24px rgba(34,228,255,0.35);
@@ -48,7 +49,7 @@
       radial-gradient(600px circle at 50% 100%, rgba(255,62,165,0.12), transparent 55%),
       linear-gradient(180deg, var(--bg-deep), var(--bg-deep-2));
     background-attachment:fixed;
-    font-family:var(--font-body);
+    font-family:var(--font-tamil), var(--font-body);
     color:var(--text);
     min-height:100vh;
     padding:24px 14px 60px;
@@ -56,7 +57,7 @@
   button{ font-family:inherit; }
   :focus-visible{ outline:2.5px solid var(--cyan); outline-offset:2px; border-radius:8px; }
   .hidden{ display:none !important; }
-  .wrap{ max-width:980px; margin:0 auto; }
+  .wrap{ max-width:1000px; margin:0 auto; }
 
   /* ---------- Header ---------- */
   .hero-card{
@@ -68,13 +69,21 @@
     content:""; position:absolute; top:-60%; right:-20%; width:60%; height:220%;
     background:var(--grad-main); opacity:0.14; transform:rotate(18deg); filter:blur(30px);
   }
+  .hero-card::after{
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:0.05;
+    background-image:
+      linear-gradient(rgba(34,228,255,0.6) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34,228,255,0.6) 1px, transparent 1px);
+    background-size:26px 26px;
+  }
   .hero-top{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; position:relative; }
   .badge-logo{
     width:56px; height:56px; flex:none; border-radius:16px;
     background:var(--grad-main); display:flex; align-items:center; justify-content:center;
-    font-family:var(--font-display); font-weight:800; font-size:20px; color:#0B0E1F;
-    box-shadow:var(--glow-purple);
+    font-size:26px; box-shadow:var(--glow-purple);
+    animation:pulseBadge 2.6s ease-in-out infinite;
   }
+  @keyframes pulseBadge{ 0%,100%{ box-shadow:var(--glow-purple);} 50%{ box-shadow:0 0 34px rgba(34,228,255,0.55);} }
   .school-name{ font-family:var(--font-display); font-weight:700; font-size:clamp(17px,3vw,21px); margin:0; }
   .school-sub{ font-size:12.5px; color:var(--text-dim); margin:2px 0 0; letter-spacing:0.4px; }
   .quiz-eyebrow{
@@ -87,7 +96,7 @@
     margin:12px 0 0; font-weight:800; line-height:1.2; position:relative;
   }
   .quiz-title small{
-    display:block; font-family:var(--font-body); font-weight:500; font-size:14px;
+    display:block; font-family:var(--font-tamil); font-weight:500; font-size:14px;
     color:var(--text-dim); margin-top:6px;
   }
 
@@ -100,7 +109,7 @@
   @keyframes riseIn{ from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 
   /* ---------- Login ---------- */
-  .login-panel{ max-width:440px; margin:0 auto; text-align:center; }
+  .login-panel{ max-width:460px; margin:0 auto; text-align:center; }
   .login-panel h2{ font-family:var(--font-display); font-size:21px; margin:0 0 4px; }
   .login-panel p.helper{ color:var(--text-dim); font-size:13.5px; margin:0 0 22px; }
   .field{ text-align:left; margin-bottom:16px; }
@@ -108,6 +117,7 @@
     display:block; font-size:12px; font-weight:700; color:var(--text-dim);
     text-transform:uppercase; letter-spacing:0.5px; margin-bottom:7px;
   }
+  .field-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0 14px; }
   input[type="text"], input[type="number"]{
     width:100%; padding:13px 15px; border:1.5px solid var(--card-border);
     border-radius:var(--radius-sm); font-size:15px; font-family:inherit;
@@ -115,6 +125,7 @@
   }
   input::placeholder{ color:var(--text-faint); }
   input:focus{ border-color:var(--cyan); box-shadow:0 0 0 3px rgba(34,228,255,0.18); outline:none; }
+  .form-error{ color:var(--red); font-weight:700; font-size:13px; min-height:1.1em; margin:-6px 0 14px; text-align:left; }
 
   .btn{
     border:none; border-radius:var(--radius-sm); cursor:pointer; font-weight:700; font-size:15px;
@@ -126,6 +137,7 @@
   .btn-main:hover{ filter:brightness(1.1); }
   .btn-ghost{ background:rgba(255,255,255,0.06); color:var(--text); border:1.5px solid var(--card-border); }
   .btn-ghost:hover{ background:rgba(255,255,255,0.1); }
+  .btn-ghost.btn-sm{ padding:9px 16px; font-size:13px; }
   .btn-lime{ background:var(--grad-lime); color:#0B0E1F; box-shadow:0 0 20px rgba(76,255,176,0.25); }
   .btn-lime:hover{ filter:brightness(1.08); }
   .btn:disabled{ opacity:0.4; cursor:not-allowed; transform:none; }
@@ -145,70 +157,58 @@
   }
   .chapter-card:hover{ transform:translateY(-4px); border-color:var(--cyan); box-shadow:var(--glow-cyan); background:rgba(255,255,255,0.08); }
   .chapter-num{
-    width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center;
-    font-family:var(--font-display); font-weight:800; font-size:13px; color:#0B0E1F;
+    width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    font-size:18px;
   }
-  .chapter-name{ font-weight:600; font-size:14.5px; color:var(--text); line-height:1.35; }
+  .chapter-name{ font-weight:600; font-size:14px; color:var(--text); line-height:1.35; }
+  .chapter-count{ font-family:var(--font-mono); font-size:11px; color:var(--text-faint); }
   .chapter-arrow{ align-self:flex-end; color:var(--cyan); font-size:18px; }
 
-  .skeleton-row{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:14px; }
-  .skeleton-card{
-    height:92px; border-radius:var(--radius-md);
-    background:linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.09) 37%, rgba(255,255,255,0.04) 63%);
-    background-size:400% 100%; animation:shimmer 1.4s ease infinite;
+  /* ---------- Mode grid (Mixed / Custom / Weak) ---------- */
+  .mode-grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-bottom:22px;
   }
-  @keyframes shimmer{ 0%{background-position:100% 0} 100%{background-position:-100% 0} }
-
-  .error-box{
-    background:rgba(255,84,112,0.1); border:1.5px solid var(--red); color:#FFB9C4;
-    border-radius:var(--radius-md); padding:16px; font-size:14px; text-align:center;
+  @media (max-width:760px){ .mode-grid{ grid-template-columns:1fr; } }
+  .mode-card{
+    background:rgba(255,255,255,0.05); border:1.5px solid var(--card-border); border-radius:var(--radius-md);
+    padding:18px; text-align:left; cursor:pointer; width:100%; font-family:inherit;
+    display:flex; flex-direction:column; gap:6px; position:relative; overflow:hidden;
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
   }
-  .error-box .btn{ margin-top:10px; }
+  .mode-card::after{ content:""; position:absolute; inset:0 0 auto 0; height:3px; background:var(--grad-main); }
+  .mode-card:hover{ transform:translateY(-4px); border-color:var(--purple); box-shadow:var(--glow-purple); background:rgba(255,255,255,0.08); }
+  .mode-card.mode-disabled{ opacity:0.4; }
+  .mode-card.mode-disabled:hover{ transform:none; box-shadow:none; border-color:var(--card-border); }
+  .mode-icon{ font-size:24px; }
+  .mode-title{ font-family:var(--font-display); font-size:15.5px; font-weight:700; }
+  .mode-sub{ font-family:var(--font-tamil); font-size:12.5px; color:var(--text-dim); }
 
-  /* ---------- Mixed test builder ---------- */
-  .mixed-card{
+  .mode-panel{
     background:linear-gradient(135deg, rgba(168,85,247,0.12), rgba(34,228,255,0.08));
     border:1.5px solid rgba(168,85,247,0.35); border-radius:var(--radius-md);
     padding:18px 20px; margin-bottom:22px;
   }
-  .mixed-card-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; flex-wrap:wrap; }
-  .mixed-card-title{ display:flex; align-items:center; gap:12px; }
-  .mixed-icon{
-    width:42px; height:42px; flex:none; border-radius:12px; background:var(--grad-main);
-    display:flex; align-items:center; justify-content:center; font-size:19px; box-shadow:var(--glow-purple);
+  .mode-panel label{ display:block; font-size:12px; font-weight:700; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+  .mode-panel input[type="number"]{ width:140px; margin-bottom:14px; }
+  .mode-panel .btn{ width:auto; padding:13px 26px; }
+
+  .custom-toolbar{ display:flex; align-items:center; gap:16px; margin-bottom:12px; flex-wrap:wrap; }
+  .custom-toolbar button{ background:none; border:none; color:var(--cyan); font-size:12.5px; font-weight:700; cursor:pointer; padding:0; }
+  .custom-toolbar button:hover{ text-decoration:underline; }
+  .custom-total{ margin-left:auto; font-size:12.5px; color:var(--text-dim); font-family:var(--font-mono); }
+  .custom-chapter-list{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr));
+    gap:9px; max-height:240px; overflow-y:auto; padding:2px; margin-bottom:16px;
   }
-  .mixed-card-title h3{ margin:0; font-family:var(--font-display); font-size:16.5px; font-weight:700; }
-  .mixed-card-title p{ margin:3px 0 0; font-size:12.5px; color:var(--text-dim); }
-  .mixed-toggle-btn{
-    background:transparent; border:1.5px solid var(--purple); color:#D9B8FF;
-    border-radius:20px; padding:7px 16px; font-size:12.5px; font-weight:700; cursor:pointer;
-    transition:background .15s, color .15s;
-  }
-  .mixed-toggle-btn:hover{ background:var(--purple); color:#fff; }
-  .mixed-builder{ margin-top:18px; }
-  .mixed-builder-label{ font-size:12px; font-weight:700; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; margin:0 0 10px; }
-  .mixed-chapter-list{
-    display:grid; grid-template-columns:repeat(auto-fill, minmax(190px,1fr));
-    gap:9px; max-height:220px; overflow-y:auto; padding:2px; margin-bottom:16px;
-  }
-  .mixed-chapter-item{
+  .custom-chapter-item{
     display:flex; align-items:center; gap:9px; background:rgba(255,255,255,0.04);
     border:1.5px solid var(--card-border); border-radius:var(--radius-sm);
     padding:10px 12px; cursor:pointer; font-size:13.5px; transition:border-color .15s, background .15s;
   }
-  .mixed-chapter-item:hover{ border-color:var(--cyan); }
-  .mixed-chapter-item.checked{ border-color:var(--lime); background:rgba(76,255,176,0.1); }
-  .mixed-chapter-item input{ accent-color:var(--lime); width:16px; height:16px; flex:none; }
-  .mixed-controls-row{ display:flex; align-items:flex-end; gap:14px; flex-wrap:wrap; margin-bottom:8px; }
-  .mixed-controls-row .field{ margin-bottom:0; }
-  .mixed-controls-row input[type="number"]{ width:120px; }
-  .mixed-select-actions{ display:flex; gap:16px; margin-bottom:12px; }
-  .mixed-select-actions button{
-    background:none; border:none; color:var(--cyan); font-size:12.5px; font-weight:700; cursor:pointer; padding:0;
-  }
-  .mixed-select-actions button:hover{ text-decoration:underline; }
-  .mixed-hint{ font-size:12px; color:var(--text-faint); margin:0; }
-  .mixed-start-btn{ width:auto; padding:13px 26px; }
+  .custom-chapter-item:hover{ border-color:var(--cyan); }
+  .custom-chapter-item input{ accent-color:var(--lime); width:16px; height:16px; flex:none; }
+  .custom-count-row{ display:flex; align-items:flex-end; gap:14px; flex-wrap:wrap; margin-bottom:8px; }
+  .mode-hint{ font-size:12px; color:var(--text-faint); margin:0; }
 
   /* ---------- Quiz layout ---------- */
   .quiz-shell{ display:flex; gap:20px; align-items:flex-start; }
@@ -216,7 +216,9 @@
   .quiz-side{ width:230px; flex:none; }
 
   .quiz-topbar{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
-  .quiz-chapter-name{ font-family:var(--font-display); font-size:17px; margin:0; font-weight:700; }
+  .quiz-topbar-left{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; min-width:0; }
+  .quiz-chapter-name{ font-family:var(--font-display); font-size:16px; margin:0; font-weight:700; }
+  .quiz-chapter-tag{ font-family:var(--font-mono); font-size:11px; color:var(--text-faint); background:rgba(255,255,255,0.05); padding:3px 9px; border-radius:20px; }
   .timer-chip{
     font-family:var(--font-mono); font-weight:700; font-size:17px;
     background:rgba(255,255,255,0.06); color:var(--cyan); border:1.5px solid rgba(34,228,255,0.4);
@@ -233,8 +235,9 @@
     border:1px solid var(--card-border); border-radius:var(--radius-lg);
     box-shadow:var(--shadow-card); padding:24px; margin-bottom:16px; animation:riseIn .3s ease;
   }
-  .q-index{ font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--purple); letter-spacing:0.5px; margin-bottom:10px; display:block; }
-  .q-text{ font-size:17px; font-weight:600; line-height:1.5; margin:0 0 20px; color:var(--text); }
+  .q-index{ font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--purple); letter-spacing:0.5px; margin-bottom:6px; display:inline-block; }
+  .q-chapter-tag{ font-family:var(--font-mono); font-size:11px; color:var(--text-faint); margin-left:8px; }
+  .q-text{ font-size:17px; font-weight:600; line-height:1.6; margin:10px 0 20px; color:var(--text); font-family:var(--font-tamil); }
 
   .bubble-option{
     display:flex; align-items:center; gap:12px; padding:13px 15px;
@@ -250,7 +253,7 @@
     font-family:var(--font-mono); font-weight:700; font-size:13px; color:var(--text-dim);
     transition:all .18s cubic-bezier(.34,1.56,.64,1); background:rgba(255,255,255,0.04);
   }
-  .bubble-text{ font-size:15px; color:var(--text); line-height:1.4; }
+  .bubble-text{ font-size:15px; color:var(--text); line-height:1.4; font-family:var(--font-tamil); }
 
   .bubble-option.selected{ border-color:var(--purple); background:rgba(168,85,247,0.14); box-shadow:var(--glow-purple); }
   .bubble-option.selected .bubble-letter{ background:var(--grad-main); border-color:transparent; color:#0B0E1F; transform:scale(1.12); }
@@ -295,7 +298,7 @@
   .result-card{
     background:var(--card); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
     border:1.5px solid rgba(255,200,69,0.4); border-radius:var(--radius-lg);
-    box-shadow:var(--shadow-card); padding:32px; text-align:center; max-width:480px; margin:0 auto 24px;
+    box-shadow:var(--shadow-card); padding:32px; text-align:center; max-width:520px; margin:0 auto 24px;
     position:relative; overflow:hidden;
   }
   .result-card::before{
@@ -309,7 +312,18 @@
   }
   .result-score{ font-family:var(--font-display); font-weight:800; font-size:42px; margin:6px 0; position:relative; }
   .result-label{ color:var(--text-dim); font-size:13.5px; margin:0 0 4px; position:relative; text-transform:uppercase; letter-spacing:0.5px; }
-  .result-chapter{ font-family:var(--font-display); font-size:16px; color:var(--cyan); margin:0; position:relative; }
+  .result-chapter{ font-family:var(--font-display); font-size:15px; color:var(--cyan); margin:0; position:relative; }
+
+  .result-student{
+    display:grid; grid-template-columns:1fr 1fr; gap:8px 16px; text-align:left;
+    background:rgba(255,255,255,0.04); border:1px solid var(--card-border); border-radius:14px;
+    padding:14px 16px; margin:20px 0 4px; position:relative;
+  }
+  .result-student div{ display:flex; flex-direction:column; gap:2px; }
+  .result-student span.rs-label{ font-family:var(--font-mono); font-size:10px; text-transform:uppercase; color:var(--text-faint); }
+  .result-student strong{ font-size:13.5px; color:var(--text); font-weight:600; }
+
+  .result-actions{ display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:22px; position:relative; }
 
   .review-heading{ font-family:var(--font-display); font-size:18px; margin:28px 0 12px; text-align:left; font-weight:700; }
 
@@ -318,7 +332,7 @@
   @media (max-width: 760px){
     body{ padding:16px 10px 50px; }
     .hero-card{ padding:20px 18px; }
-    .badge-logo{ width:48px; height:48px; font-size:16px; }
+    .badge-logo{ width:48px; height:48px; font-size:22px; }
     .panel{ padding:18px; }
     .quiz-shell{ flex-direction:column; }
     .quiz-side{ width:100%; }
@@ -336,15 +350,15 @@
     <!-- HEADER -->
     <div class="hero-card">
       <div class="hero-top">
-        <div class="badge-logo">CS</div>
+        <div class="badge-logo">🤖</div>
         <div>
-          <p class="school-name">Govt. Boys Hr. Sec. School</p>
-          <p class="school-sub">Podaturpet · 631208 · Tiruvallur District</p>
+          <p class="school-name">அரசு ஆண்கள் மேனிலைப் பள்ளி</p>
+          <p class="school-sub">பொதட்டூர்பேட்டை - 631208 · திருவள்ளூர் மாவட்டம்</p>
         </div>
       </div>
-      <span class="quiz-eyebrow">⚡ Book Back One Marks</span>
-      <h1 class="quiz-title">12th Standard Computer Science
-        <small>Tamil Medium — Chapter-wise Practice Quiz</small>
+      <span class="quiz-eyebrow">⚡ Practice · Book Back One Marks</span>
+      <h1 class="quiz-title">12-ஆம் வகுப்பு கணினி அறிவியல்
+        <small>தமிழ் வழி · இயல் வாரியான புத்தக பயிற்சி வினாத்தாள்</small>
       </h1>
     </div>
 
@@ -353,49 +367,71 @@
       <h2>🚀 Ready to level up?</h2>
       <p class="helper">Enter your details to start today's practice quiz.</p>
       <div class="field">
-        <label for="studentName">Student Name</label>
-        <input id="studentName" type="text" placeholder="e.g. Karthik R">
+        <label for="studentName">மாணவர் பெயர் / Student Name</label>
+        <input id="studentName" type="text" placeholder="e.g. SURESH">
       </div>
       <div class="field">
-        <label for="schoolName">School Name</label>
-        <input id="schoolName" type="text" placeholder="e.g. Govt. Boys Hr. Sec. School">
+        <label for="schoolName">பள்ளியின் பெயர் / School Name</label>
+        <input id="schoolName" type="text" placeholder="School Name" value="GBHSS, Podaturpet">
       </div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="studentClass">வகுப்பு / Class</label>
+          <input id="studentClass" type="text" placeholder="12" value="12">
+        </div>
+        <div class="field">
+          <label for="registerNumber">பதிவு எண் (Optional)</label>
+          <input id="registerNumber" type="text" placeholder="Register No.">
+        </div>
+      </div>
+      <div class="form-error" id="formError"></div>
       <button onclick="enterQuiz()" class="btn btn-main">Start Quiz ➜</button>
     </div>
 
     <!-- CHAPTER SELECTION -->
     <div id="chapterSection" class="panel hidden">
       <h2 class="section-heading">Choose a chapter</h2>
-      <p class="section-sub">Pick any chapter, or build a mixed test below 🔀</p>
+      <p class="section-sub">Pick a chapter below, or launch a smart test 🤖</p>
 
-      <!-- MIXED TEST BUILDER -->
-      <div class="mixed-card">
-        <div class="mixed-card-head" onclick="toggleMixedBuilder()">
-          <div class="mixed-card-title">
-            <span class="mixed-icon">🎲</span>
-            <div>
-              <h3>Custom Mixed Test</h3>
-              <p>Combine chapters and pick how many questions.</p>
-            </div>
-          </div>
-          <button type="button" id="mixedToggleBtn" class="mixed-toggle-btn" onclick="event.stopPropagation(); toggleMixedBuilder()">Build a test</button>
+      <div class="mode-grid" id="modeGrid">
+        <button type="button" class="mode-card" id="btnModeMixed">
+          <span class="mode-icon">🎲</span>
+          <span class="mode-title">Mixed Test</span>
+          <span class="mode-sub">அனைத்து பாடங்களிலிருந்தும் கலந்த வினாக்கள்</span>
+        </button>
+        <button type="button" class="mode-card" id="btnModeCustom">
+          <span class="mode-icon">🧩</span>
+          <span class="mode-title">Custom Test</span>
+          <span class="mode-sub">நீங்கள் விரும்பும் பாடங்களைத் தேர்ந்தெடுக்கவும்</span>
+        </button>
+        <button type="button" class="mode-card" id="btnModeWeak">
+          <span class="mode-icon">🧠</span>
+          <span class="mode-title">Weak Questions</span>
+          <span class="mode-sub"><span id="weakCount">0</span> மறுபார்வைக்கு</span>
+        </button>
+      </div>
+
+      <div class="mode-panel hidden" id="panelMixed">
+        <label for="mixedCount">எத்தனை வினாக்கள்? / How many questions?</label>
+        <input type="number" id="mixedCount" min="1" value="20"><br>
+        <button type="button" id="btnStartMixed" class="btn btn-lime">விருப்பத் தேர்வை தொடங்கு→/Start Mixed Test →</button>
+      </div>
+
+      <div class="mode-panel hidden" id="panelCustom">
+        <div class="custom-toolbar">
+          <button type="button" id="btnSelectAll">Select all</button>
+          <button type="button" id="btnSelectNone">Clear</button>
+          <span class="custom-total" id="customTotalCount">0 chapters selected</span>
         </div>
-        <div id="mixedBuilder" class="mixed-builder hidden">
-          <p class="mixed-builder-label">Select chapters</p>
-          <div class="mixed-select-actions">
-            <button type="button" onclick="setAllMixedChapters(true)">Select all</button>
-            <button type="button" onclick="setAllMixedChapters(false)">Clear</button>
+        <div class="custom-chapter-list" id="customChapterList"></div>
+        <div class="custom-count-row" id="customCountRow" style="display:none;">
+          <div class="field" style="margin-bottom:0;">
+            <label for="customCount">No. of questions</label>
+            <input id="customCount" type="number" min="1">
           </div>
-          <div id="mixedChapterList" class="mixed-chapter-list"></div>
-          <div class="mixed-controls-row">
-            <div class="field">
-              <label for="mixedQuestionCount">No. of questions</label>
-              <input id="mixedQuestionCount" type="number" min="1" value="10">
-            </div>
-            <button class="btn btn-lime mixed-start-btn" onclick="startMixedTest()">Start Mixed Test →</button>
-          </div>
-          <p id="mixedHint" class="mixed-hint">Select at least one chapter to continue.</p>
+          <button class="btn btn-lime" id="btnStartCustom">Start Custom Test →</button>
         </div>
+        <p class="mode-hint" id="customHint">குறைந்தது ஒரு பாடத்தையாவது தேர்ந்தெடுக்கவும்.</p>
       </div>
 
       <div id="chapterList" class="chapter-grid"></div>
@@ -404,7 +440,10 @@
     <!-- QUIZ SECTION -->
     <div id="quizSection" class="hidden">
       <div class="quiz-topbar">
-        <h2 id="chapterTitle" class="quiz-chapter-name"></h2>
+        <div class="quiz-topbar-left">
+          <button type="button" id="backToChaptersTopBtn" class="btn btn-ghost btn-sm">← Chapters</button>
+          <h2 id="chapterTitle" class="quiz-chapter-name"></h2>
+        </div>
         <div id="timer" class="timer-chip">0:00</div>
       </div>
       <div class="progress-track"><div id="progressFill" class="progress-fill" style="width:0%"></div></div>
@@ -438,117 +477,50 @@
         <p class="result-label">Your Score</p>
         <p id="scoreText" class="result-score">0 / 0</p>
         <p id="resultChapter" class="result-chapter"></p>
+        <div class="result-student">
+          <div><span class="rs-label">Name</span><strong id="rsName">-</strong></div>
+          <div><span class="rs-label">School</span><strong id="rsSchool">-</strong></div>
+          <div><span class="rs-label">Class</span><strong id="rsClass">-</strong></div>
+          <div><span class="rs-label">Reg. No.</span><strong id="rsReg">-</strong></div>
+        </div>
+        <div class="result-actions">
+          <button id="backToChaptersBtn" class="btn btn-main" style="width:auto; padding:13px 24px;">Back to Chapters</button>
+          <button id="restartTestBtn" class="btn btn-ghost" style="width:auto; padding:13px 24px;">Restart</button>
+        </div>
       </div>
       <h3 class="review-heading">Answer Review</h3>
       <div id="reviewContainer"></div>
-      <div style="text-align:center; margin-top:22px;">
-        <button id="backToChaptersBtn" class="btn btn-main" style="width:auto; padding:13px 28px;">Back to Chapters</button>
-      </div>
     </div>
 
     <p class="footer-note">GOVT. BOYS HR. SEC. SCHOOL · PODATURPET · TIRUVALLUR DISTRICT</p>
   </div>
 
   <script>
-    const APP_URL = "https://script.google.com/macros/s/AKfycbxINB3yR8VypUeRos80tuMm77mD2ozRkqVGZosjo3mFOEFuD_mhUwYZ_MO9XM6x8ElG/exec"; // replace with deployed Apps Script web app URL
+    // Score submissions still post to the Apps Script backend for logging (question
+    // content itself is embedded below and no longer fetched live).
+    const APP_URL = "https://script.google.com/macros/s/AKfycbxINB3yR8VypUeRos80tuMm77mD2ozRkqVGZosjo3mFOEFuD_mhUwYZ_MO9XM6x8ElG/exec";
+    const WEAK_KEY = "cs12_tm_weak_questions_v1";
+    const LETTERS = ["A","B","C","D","E","F"];
+    const CHIP_COLORS = ["linear-gradient(135deg,#22E4FF,#4C7BFF)","linear-gradient(135deg,#A855F7,#FF3EA5)","linear-gradient(135deg,#4CFFB0,#22E4FF)","linear-gradient(135deg,#FFC845,#FF8A3D)","linear-gradient(135deg,#FF3EA5,#FF8A3D)"];
+
+    // Tamil-medium book-back one-mark questions, extracted chapter-wise from the
+    // bilingual source document (English content intentionally excluded).
+    const BOOK_BACK_CHAPTERS = [{"chapter":"பாடம் 1: செயற்கூறு","questions":[{"question":"ஒரு குறிப்பிட்ட செயலைச் செய்வதற்காக பயன்படுத்தப்படும் குறிமுறைகளின் சிறிய பகுதியே","options":["துணை நிரல்கள்","கோப்புகள்","Pseudo குறிமுறை","தொகுதிகள்"],"correct":"துணை நிரல்கள்"},{"question":"பின்வரும் எந்த அலகு ஒரு பெரிய குறிமுறை கட்டமைப்பில் வரையறுக்கப்பட்டுள்ளது?","options":["துணை நிரல்கள்","செயற்கூறு","கோப்புகள்","தொகுதிகள்"],"correct":"செயற்கூறு"},{"question":"பின்வரும் எது தனித்தன்மையான தொடரியல் தொகுதிகளைக் கொண்டதாகும்?","options":["துணை நிரல்கள்","செயற்கூறு","வரையறை","தொகுதிகள்"],"correct":"வரையறை"},{"question":"செயற்கூறு வரையறையில் உள்ள மாறிகள் எவ்வாறு அழைக்கப்படுகிறது?","options":["துணை நிரல்கள்","செயற்கூறு","வரையறை","அளபுருக்கள்"],"correct":"அளபுருக்கள்"},{"question":"செயற்கூறு வரையறைக்கு அனுப்பப்படும் மதிப்புகள் எவ்வாறு அழைக்கப்படுகிறது?","options":["செயலுருபுகள்","துணை நிரல்கள்","செயற்கூறு","வரையறை"],"correct":"செயலுருபுகள்"},{"question":"தரவு வகை குறிப்பு எழுதும்போது, எது கட்டாயமாகிறது?","options":["{ }","( )","[ ]","< >"],"correct":"( )"},{"question":"பின்வரும் எது ஒரு பொருள் செய்ய வேண்டியதை தீர்மானிக்கிறது?","options":["இயக்க அமைப்பு","நிரல் பெயர்ப்பி","இடைமுகம்","தொகுப்பான்"],"correct":"இடைமுகம்"},{"question":"பின்வரும் எது இடைமுகத்தின் வரையறுக்கப்பட்ட கட்டளைகளை நிறைவேற்றுகிறது?","options":["இயக்க அமைப்பு","நிரல் பெயர்ப்பி","செயல்படுத்துதல்","தொகுப்பான்"],"correct":"செயல்படுத்துதல்"},{"question":"ஒரே மாதிரியான அதே அளபுருக்களை செயகூறுவிற்கு அனுப்பினால் சரியான விடையைத் தரும் செயற்கூறு","options":["Impure செயற்கூறு","Partial செயற்கூறு","Dynamic செயற்கூறு","Pure செயற்கூறு"],"correct":"Pure செயற்கூறு"},{"question":"அளபுருக்களை அனுப்பும் போது பக்க விளைவுகளை ஏற்படுத்தும் செயற்கூறு எவ்வாறு அழைக்கப்படும்?","options":["Impure செயற்கூறு","Partial செயற்கூறு","Dynamic செயற்கூறு","Pure செயற்கூறு"],"correct":"Impure செயற்கூறு"}]},{"chapter":"பாடம் 2: தரவு அருவமாக்கம்","questions":[{"question":"பின்வரும் எந்த செயற்கூறு அருவமாக்கம் தரவு வகையை உருவமைக்கப் பயன்படுகிறது?","options":["Constructors","Destructors","recursive","Nested"],"correct":"Constructors"},{"question":"பின்வரும் எந்த செயற்கூறு தரவு வகையில் இருந்து தகவல்களை மீட்டெடுக்கும்?","options":["Constructors","Selectors","recursive","Nested"],"correct":"Selectors"},{"question":"வரிசைப்படுத்தப்பட்ட உருப்புகளை மாற்றக்கூடிய தரவு கட்டமைப்பு","options":["Built in","List","Tuple","Derived data"],"correct":"List"},{"question":"மாற்ற முடியாத பொருள்களின் தொடர் வரிசை","options":["Built in","List","Tuple","Derived data"],"correct":"Tuple"},{"question":"உருவமைப்பு அறியப்பட்ட தரவு வகை எவ்வாறு அழைக்கப்படுகிறது?","options":["Built in datatype","Derived datatype","Concrete datatype","Abstract datatype"],"correct":"Concrete datatype"},{"question":"உருவமைப்பு அறியப்படாத தரவு வகை எவ்வாறு அழைக்கப்படுகிறது?","options":["Built in datatype","Derived datatype","Concrete datatype","Abstract datatype"],"correct":"Abstract datatype"},{"question":"பின்வருவனவற்றில் எது கலவை அமைப்பு?","options":["Pair","Triplet","Single","quadrat"],"correct":"Pair"},{"question":"இரு மதிப்புகளை ஒன்றாக பிணைப்பது எந்த வகையாக கருதப்படுகிறது?","options":["Pair","Triplet","Single","quadrat"],"correct":"Pair"},{"question":"பின்வருவனவற்றில் எது பல் உருப்பு பொருளின் பல்வேறு பகுதிகளை பெயரிட அனுமதிக்கிறது?","options":["Tuples","Lists","Classes","quadrats"],"correct":"Classes"},{"question":"பின்வருவனவற்றில் எது கோவைகளை சதுர அடைப்புக்குறிக்குள் வைத்து உருவமைக்கிறது?","options":["Tuples","Lists","Classes","quadrats"],"correct":"Lists"}]},{"chapter":"பாடம் 3: வரையெல்லை","questions":[{"question":"பின்வருவனவற்றுள் எது நிரலின் ஒரு பகுதியின் அணுகியல்பை மற்றொரு பகுதிக்கு குறிப்பதாகும்?","options":["வரையெல்லை","நினைவகம்","முகவரி","அணுகுமுறை"],"correct":"வரையெல்லை"},{"question":"மாறியின் பெயரை ஒரு பொருளுடன் பிணைக்கும் செயல்முறையை என்னவென்று அழைக்கப்படும்?","options":["வரையெல்லை","மேப்பிங்","பின் பிணைத்தல்","முன் பிணைத்தல்"],"correct":"மேப்பிங்"},{"question":"பின்வருவனவற்றுள் எது நிரலாக்க மொழியில் மாறியையும் பொருளையும் மேப் செய்யப் பயன்படுகிறது?","options":["::",":=","=","=="],"correct":"="},{"question":"எது மாறியின் பொருளுடன் மேப்பிங் செய்வதற்கான கொள்கலன் ஆகும்?","options":["வரையெல்லை","மேப்பிங்","பிணைத்தல்","Namespaces"],"correct":"Namespaces"},{"question":"எந்த வரையெல்லை நடப்பு செயற்கூறில் வரையறுக்கப்படும் மாறிகளைக் குறிக்கும்?","options":["உள்ளமை வரையெல்லை","முழுதளாவிய வரையெல்லை","தொகுதி வரையெல்லை","செயற்கூறு வரையெல்லை"],"correct":"உள்ளமை வரையெல்லை"},{"question":"ஒரு கணிப்பொறி நிரலை பல துணை நிரல்களாக பிரிக்கும் செயல்முறையே என்னவென்று அழைக்கப்படும்?","options":["செயல்முறை நிரலாக்கம்","தொகுதி நிரலாக்கம்","நிகழ் இயக்க நிரலாக்கம்","பொருள் நோக்கு நிரலாக்கம்"],"correct":"தொகுதி நிரலாக்கம்"},{"question":"எது கணினி சூழலில் உள்ள வளங்களை யார் பார்வையிட மற்றும் பயன்படுத்த முடியும் என்பதை வரைமுறைப்படுத்தும் ஒரு பாதுகாப்பு தொழில்நுட்பமாகும்?","options":["கடவுச்சொல்","அங்கீகாரம்","அணுகல் கட்டுப்பாடு","சான்றிதழ்"],"correct":"அணுகல் கட்டுப்பாடு"},{"question":"எந்த இனக்குழுவின் உறுப்புகளை இனக்குழுவின் உள்ளே மட்டும்தான் கையாள முடியும்?","options":["Public உறுப்புகள்","Protected உறுப்புகள்","Secured உறுப்புகள்","Private உறுப்புகள்"],"correct":"Private உறுப்புகள்"},{"question":"எந்த உறுப்புகளை இனக்குழுவிற்கு வெளியே இருந்தும் அணுக முடியும்?","options":["Public உறுப்புகள்","Protected உறுப்புகள்","Secured உறுப்புகள்","Private உறுப்புகள்"],"correct":"Public உறுப்புகள்"},{"question":"எது வரையறுக்கப்பட்ட இனக்குழு மற்றும் அதன் துணை இனக்குழுக்களால் அணுகப்படும் உறுப்புகளாகும்?","options":["Public உறுப்புகள்","Protected உறுப்புகள்","Secured உறுப்புகள்","Private உறுப்புகள்"],"correct":"Protected உறுப்புகள்"}]},{"chapter":"பாடம் 4: நெறிமுறையின் யுக்திகள்","questions":[{"question":"எந்த சொல் பெர்ஷிய கணிதமேதை அபு ஜாஃபர் முகமது இபின்-ஐமுசாஅல் கௌவாரிஸ்மி பெயரில் இருந்து வந்தது?","options":["Flowchart","Flow","Algorithm","Syntax"],"correct":"Algorithm"},{"question":"பின்வரும் வரிசையாக்க நெறிமுறையில், எந்த நெறிமுறைக்கு குறைந்த எண்ணிக்கையிலான இடமாற்றம் தேவைப்படும்?","options":["குமிழி","விரைவு","ஒன்றிணைந்த","தேர்ந்தெடுப்பு"],"correct":"தேர்ந்தெடுப்பு"},{"question":"நெறிமுறையின் செயல்திறனை அளவிட இரண்டு முக்கிய அளவீடுகள் எவை?","options":["செயலி மற்றும் நினைவகம்","சிக்கல் மற்றும் கொள்ளளவு","நேரம் மற்றும் இடம்","தரவு மற்றும் இடம்"],"correct":"நேரம் மற்றும் இடம்"},{"question":"செல்லுபடியாகும் உள்ளீட்டுக்கு எதிர்பார்க்கப்படும் வெளியீட்டைத்தரும் நெறிமுறை எவ்வாறு அழைக்கப்படுகிறது?","options":["நெறிமுறைசார் தீர்வு","நெறிமுறைசார் வெளியீடு","நெறிமுறைசார் சிக்கல்","நெறிமுறைசார் குறிமுறை"],"correct":"நெறிமுறைசார் தீர்வு"},{"question":"ஒரு நெறிமுறையில் மிகமோசமான நிலையை குறிக்க பின்வரும் எது பயன்படுகிறது?","options":["Big A","Big S","Big W","Big O"],"correct":"Big O"},{"question":"Big Ω இதன் எதிர் பதமானது:","options":["Big O","Big θ","Big A","Big S"],"correct":"Big O"},{"question":"இருமத் தேடல் இவ்வாறும் அழைக்கப்படும்:","options":["வரிசைமுறைத் தேடல்","தொடர் தேடல்","தொடரற்ற தேடல்","இடைவெளித் தேடல்"],"correct":"இடைவெளித் தேடல்"},{"question":"θ என்ற குறியீடு asymptotic மதிப்பீட்டில் எதை குறிக்கிறது?","options":["அடிப்படை நிலை","மிதமான நிலை","மோசமான நிலை","NULL நிலை"],"correct":"மிதமான நிலை"},{"question":"ஒரு சிக்கல் துணைச் சிக்கல்களாக பிரித்து அதனை பல முறை பயன்படுத்தினால், அந்த சிக்கல் எந்த பண்பை பெறும்?","options":["ஒன்றோடு ஒன்றிணைந்த துணைச்சிக்கல்","உகந்த துணை கட்டமைப்பு","நினைவிருத்தல்","பொறாமை"],"correct":"ஒன்றோடு ஒன்றிணைந்த துணைச்சிக்கல்"},{"question":"இயங்கு நிரலாக்கத்தில், ஏற்கனவே கணக்கீடு செய்த மதிப்புகளை சேமிக்கும் யுக்தியை எவ்வாறு அழைப்பர்?","options":["மதிப்பை சேமிக்கும் பண்பு","மதிப்பை சேகரிக்கும் பண்பு","நினைவிருத்தல்","படமிடல்"],"correct":"நினைவிருத்தல்"}]},{"chapter":"பாடம் 5: பைத்தான் அறிமுகம்-மாறிகள் மற்றும் செயற்குறிகள்","questions":[{"question":"பைத்தானை உருவாக்கியவர் யார்?","options":["ரிட்ஸ்","கைடோ வான் ரோஷம்","பில் கேட்ஸ்","சுந்தர் பிச்சை"],"correct":"கைடோ வான் ரோஷம்"},{"question":"இவற்றுள் எந்த தூண்டு குறி நிரல் பெயர்ப்பி கட்டளைகளை ஏற்று கொள்ள தயார் நிலையில் இருப்பதை குறிக்கிறது?","options":[">>","<<<","#","<<"],"correct":">>"},{"question":"பின்வரும் எந்த சாவி சேர்மானம் ஒர் புதிய பைத்தான் நிரலை உருவாக்கப்பயன்படுகிறது?","options":["Ctrl + C","Ctrl + F","Ctrl + B","Ctrl + N"],"correct":"Ctrl + N"},{"question":"பின்வரும் எந்த குறியுரு பைத்தான் நிரலில் குறிப்புகளை உள்ளீடு செய்ய பயன்படுகிறது?","options":["#","&","@","$"],"correct":"#"},{"question":"எந்த குறி ஒன்றுக்கு மேற்பட்ட உறுப்புகளை ஒற்றை வரியில் அச்சிடும்?","options":["அரைப்புள்ளி","டாலர்","காற்புள்ளி","முக்காற்புள்ளி"],"correct":"காற்புள்ளி"},{"question":"பின்வரும் எது வில்லைகள் கிடையாது?","options":["நிரல்பெயர்ப்பி","குறிப்பெயர்கள்","சிறப்புச்சொற்கள்","செயற்குறிகள்"],"correct":"நிரல்பெயர்ப்பி"},{"question":"பின்வருவனவற்றில் எது பைத்தான் சிறப்புச் சொல் கிடையாது?","options":["break","while","continue","operators"],"correct":"operators"},{"question":"எந்த செயற்குறியை ஒப்பீடு செயற்குறி என்று அழைக்கப்படுகிறது?","options":["கணக்கீடு","தொடர்புடைய / ஒப்பீடு","தருக்க","மதிப்பிருத்தல்"],"correct":"தொடர்புடைய / ஒப்பீடு"},{"question":"பின்வருவனவற்றில் எது தருக்க செயற்குறி கிடையாது?","options":["and","or","not","like / Assignment"],"correct":"like / Assignment"},{"question":"எந்த செயற்குறி நிபந்தனை செயற்குறி என்று அழைக்கப்படுகிறது?","options":["மும்ம செயற்குறி","தொடர்புடைய","தருக்க","மதிப்பிருத்தல்"],"correct":"மும்ம செயற்குறி"}]},{"chapter":"பாடம் 6: கட்டுப்பாட்டுக் கட்டமைப்புகள்","questions":[{"question":"பைத்தானில் எத்தனை முக்கியமான கட்டுப்பாட்டு கட்டமைப்புகள் உள்ளன?","options":["3","4","5","6"],"correct":"3"},{"question":"elif என்பதன் விரிவாக்கம்","options":["nested if","if..else","else if","if..elif"],"correct":"else if"},{"question":"பைத்தான் நிரலில் எது முக்கிய பங்கு வகிக்கிறது?","options":["கூற்றுகள்","கட்டுப்பாடு","அமைப்பு","உள்தள்ளல்"],"correct":"உள்தள்ளல்"},{"question":"எந்த கூற்று பொதுவாக இட நிரப்பியாக பயன்படுகிறது?","options":["continue","break","pass","goto"],"correct":"pass"},{"question":"if கூற்றின் நிபந்தனை பின்வரும் எந்த வடிவில் இருக்க வேண்டும்?","options":["கணித அல்லது ஒப்பீட்டுக் கோவைகள்","கணித அல்லது தருக்கக் கோவைகள்","ஒப்பீட்டு அல்லது தருக்கக் கோவைகள்","கணித கோவைகள்"],"correct":"ஒப்பீட்டு அல்லது தருக்கக் கோவைகள்"},{"question":"பின்வரும் எது வரையறுக்கப்பட்ட மடக்கு ஆகும்?","options":["do...while","while","for","if..elif"],"correct":"for"},{"question":"i=1; while True: if i%3==0: break; print(i, end=''); i+=1 என்ற குறிமுறையின் வெளியீடு என்ன?","options":["12","123","1234","124"],"correct":"12"},{"question":"T=1; while T: print(True); break என்ற குறிமுறையின் வெளியீடு என்ன?","options":["தவறு","சரி","0","வெளியீடு இல்லை"],"correct":"சரி"},{"question":"பின்வருவனவற்றில் எது தாவல் கூற்று கிடையாது?","options":["for","pass","continue","break"],"correct":"for"},{"question":"எந்த நிறுத்தற்குறி அடிக்கோடிட்ட இடத்தில் இடம் பெற வேண்டும்: if <condition>_?","options":[";",":","::","!"],"correct":":"}]},{"chapter":"பாடம் 7: பைத்தான் செயற்கூறுகள்","questions":[{"question":"ஒரு குறிப்பிட்ட செயலைச் செய்வதற்காக வடிவமைக்கப்பட்டு, பெயரிடப்பட்ட குறிமுறையின் தொகுதி","options":["மடக்கு","கிளைப்பிரிப்பு","செயற்கூறு","தொகுதி"],"correct":"செயற்கூறு"},{"question":"தன்னைத்தானே அழைத்துக் கொள்ளும் செயற்கூறை இவ்வாறு அழைப்பர்:","options":["உள்ளிணைந்த","தற்சுழற்சி","லாம்டா","return கூற்று"],"correct":"தற்சுழற்சி"},{"question":"எந்த செயற்கூறை பெயரில்லா செயற்கூறு என்று அழைக்கப்படுகிறது?","options":["லாம்டா","தற்சுழற்சி","செயற்கூறு","வரையறை"],"correct":"லாம்டா"},{"question":"செயற்கூறு தொகுதியை எந்த சிறப்புச்சொல் தொடங்கி வைக்கிறது?","options":["define","for","finally","def"],"correct":"def"},{"question":"செயற்கூறு தொகுதியை விட்டு வெளியேற எந்த சிறப்புச்சொல் பயன்படுகிறது?","options":["define","return","finally","def"],"correct":"return"},{"question":"செயற்கூறு வரையறையில் பின்வரும் எந்த குறியீடு பயன்படுத்தப்படுகிறது?","options":["; (அரைப்புள்ளி)",". (புள்ளி)",": (முக்காற்புள்ளி)","$ (டாலர்)"],"correct":": (முக்காற்புள்ளி)"},{"question":"செயற்கூறுக்கு எந்த செயலுருபு சரியான இட வரிசையில் செயலுருபுகளை அனுப்பும்?","options":["தேவைப்படும்","சிறப்புச்சொல்","தானமைவு","மாறி நீளம்"],"correct":"தேவைப்படும்"},{"question":"பின்வரும் கூற்றுகளைப் படித்து, சரியான கூற்றுகளைத் தேர்ந்து எடுக்கவும்: (I) பைத்தானில், செயற்கூறை வரையறுக்கும் போது குறிப்பிட்ட தரவு வகைகளைக் குறிப்பிடத் தேவையில்லை. (II) பைத்தான் சிறப்புச் சொற்களைச் செயற்கூறின் பெயராகப் பயன்படுத்தலாம்.","options":["I சரி மற்றும் II தவறு","இரண்டுமே சரி","I தவறு மற்றும் II சரி","இரண்டுமே தவறு"],"correct":"I சரி மற்றும் II தவறு"},{"question":"கொடுக்கப்பட்ட கூற்றை வெற்றிகரமாக நிறைவேற்றுவதற்கு, பின்வருவனவற்றுள் சரியான ஒன்றைத் தேர்ந்தெடு: if ____: print(x, 'is a leap year')","options":["x % 2 == 0","x % 4 == 0","x / 4 == 0","x % 4 = 0"],"correct":"x % 4 == 0"},{"question":"testpython(): என்ற செயற்கூறை வரையறுக்க பின்வரும் எந்த சிறப்புச்சொல் பயன்படுகிறது?","options":["define","return","def","while"],"correct":"def"}]},{"chapter":"பாடம் 8: சரங்கள் மற்றும் சரங்களைக் கையாளுதல்","questions":[{"question":"பின்வருவனவற்றுள் எது கீழ்க்கண்ட பைத்தான் நிரலுக்கான வெளியீடாகும்: str1='TamilNadu'; print(str1[::-1])?","options":["Tamilnadu","Tmlau","udanlimaT","udaNlimaT"],"correct":"udaNlimaT"},{"question":"பின்வரும் குறியீட்டுக்கான வெளியீடு யாது: str1 = 'Chennai Schools'; str1[7] = '-'?","options":["Chennai-Schools","Chenna-School","Type error","Chennai"],"correct":"Type error"},{"question":"பின்வருவனவற்றுள் எது சரங்களை இணைக்க பயன்படும் செயற்குறியாகும்?","options":["+","&","*","="],"correct":"+"},{"question":"மூன்று மேற்கோள் குறிகளுக்குள் தரப்படும் சரமானது பின்வருபவனற்றுள் எதை உருவாக்க அனுமதிக்கும்?","options":["ஒரு வரி சரம்","பல வரி சரங்கள்","இரு வரி சரம்","ஒன்றுக்கு மேற்பட்ட சரங்கள்"],"correct":"பல வரி சரங்கள்"},{"question":"பைத்தானில் சரங்களானது:","options":["மாற்றக்கூடியது","மாறாத்தன்மையுடையது","பரஸ்பரதன்மையற்றது","நெகிழ்வானது"],"correct":"மாறாத்தன்மையுடையது"},{"question":"பின்வருவனவற்றுள் எது சரத்தினை துண்டாக்கும் (Slicing) செயற்குறியாகும்?","options":["{ }","[ ]","< >","( )"],"correct":"[ ]"},{"question":"stride என்பது என்ன?","options":["slide செயல்பாட்டின் கீழ்ஒட்டு","slice செயற்பாட்டின் முதல் அளபுரு","slice செயற்பாட்டின் இரண்டாவது அளபுரு","slice செயற்பாட்டின் மூன்றாவது அளபுரு"],"correct":"slice செயற்பாட்டின் மூன்றாவது அளபுரு"},{"question":"பின்வரும் வடிவமைப்பு குறியுருக்களுள் அடுக்கு குறியீட்டில் அச்சிட உதவும் மேல் எழுத்து எது?","options":["%e","%E","%g","%n"],"correct":"%E"},{"question":"பின்வருபவனற்றுள் எந்தக் குறியீடு format() செயற்கூறுடன் பயன்படும் பதிலீடு குறியீடாகும்?","options":["{ }","< >","++","^^"],"correct":"{ }"},{"question":"சரத்தின் கீழ் ஒட்டானது:","options":["நேர்மறை எண்கள்","எதிர்மறை எண்கள்","(அ) மற்றும் (ஆ)","(அ) அல்லது (ஆ)"],"correct":"(அ) மற்றும் (ஆ)"}]},{"chapter":"பாடம் 9: List, Tuples, set மற்றும் Dictionary தொகுப்பு தரவினங்கள்","questions":[{"question":"தரவினத் தொகுதியின் தொடர்பில்லாத ஒன்றைத் தேர்வு செய்க:","options":["List","Tuple","Dictionary","Loop"],"correct":"Loop"},{"question":"Let list1 = [2,4,6,8,10] எனில் print(list1[-2]) என்பதன் முடிவு:","options":["10","8","4","6"],"correct":"8"},{"question":"பின்வரும் எந்த செயற்கூறு List-ல் உள்ள உறுப்புகளின் எண்ணிக்கையைக் கணக்கிடப் பயன்படுகிறது?","options":["count()","find()","len()","index()"],"correct":"len()"},{"question":"If List=[10,20,30,40,50] எனில் List[2]=35 என்பது தரும் விடை:","options":["[35,10,20,30,40,50]","[10,20,30,40,50,35]","[10,20,35,40,50]","[10,35,30,40,50]"],"correct":"[10,20,35,40,50]"},{"question":"If List=[17,23,41,10] எனில் List.append(32) என்பதன் விடை:","options":["[32,17,23,41,10]","[17,23,41,10,32]","[10,17,23,32,41]","[41,32,23,17,10]"],"correct":"[17,23,41,10,32]"},{"question":"பின்வரும் எந்த பைத்தான் செயற்கூறு ஏற்கனவே உள்ள List-ல் ஒன்றுக்கும் மேற்பட்ட உறுப்புகளைச் சேர்க்கப் பயன்படுகிறது?","options":["append()","append_more()","extend()","more()"],"correct":"extend()"},{"question":"S=[x**2 for x in range(5)]; print(S) என்பதன் விடை என்ன?","options":["[0,1,2,4,5]","[0,1,4,9,16]","[0,1,4,9,16,25]","[1,4,9,16,25]"],"correct":"[0,1,4,9,16]"},{"question":"பைத்தானில் type() செயற்கூறின் பயன் என்ன?","options":["Tuple உருவாக்க","Tuple உள்ள உறுப்புகளின் வகையைக் கண்டறிய","பைத்தான் பொருளின் தரவினத்தை கண்டறிய","பட்டியலை உருவாக்க"],"correct":"பைத்தான் பொருளின் தரவினத்தை கண்டறிய"},{"question":"பின்வரும் எந்த கூற்று சரியானது அல்ல?","options":["List மாற்றம் செய்யலாம்","Tuples மாற்றம் செய்ய முடியாது","Append() செயற்கூறு, ஒரு உறுப்பை சேர்க்கப் பயன்படுகிறது","Extend() செயற்கூறு லிஸ்ட்ல் உறுப்புகளை சேர்க்க Tuples-ல் பயன்படுகிறது"],"correct":"Extend() செயற்கூறு லிஸ்ட்ல் உறுப்புகளை சேர்க்க Tuples-ல் பயன்படுகிறது"},{"question":"setA={3,6,9}, setB={1,3,9} எனில், print(setA | setB) என்பதன் முடிவு:","options":["{3,6,9,1,3,9}","{3,9}","{1}","{1,3,6,9}"],"correct":"{1,3,6,9}"},{"question":"பின்வரும் எந்த set செயல்பாடு, இரண்டு set-களுக்கும் பொதுவான உறுப்புகள் நீங்கலாக மற்ற அனைத்து உறுப்புகளையும் உள்ளடக்கியது?","options":["சமச்சீரான வேறுபாடு","வேறுபாடு","வெட்டு","சேர்ப்பு"],"correct":"சமச்சீரான வேறுபாடு"},{"question":"பைத்தான், Dictionary-ல் திறவுகோல்கள் எதனால் குறிப்பிடப்படுகின்றன?","options":["=",";","+",":"],"correct":":"}]},{"chapter":"பாடம் 10: பைத்தான் இனக்குழுக்கள் மற்றும் பொருள்கள்","questions":[{"question":"பின்வருவனவற்றுள் எவை பொருள் நோக்கு நிரலாக்கத்தின் முக்கிய அம்சம் ஆகும்?","options":["ஆக்கி மற்றும் இனக்குழு","ஆக்கி மற்றும் பொருள்","இனக்குழு மற்றும் பொருள்","ஆக்கி மற்றும் அழிப்பி"],"correct":"இனக்குழு மற்றும் பொருள்"},{"question":"இனக்குழுவின் உள்ளே வரையறுக்கப்படும் செயற்கூறு எது?","options":["செயற்கூறு","கூறு","வழிமுறை","பிரிவு"],"correct":"வழிமுறை"},{"question":"இனக்குழு உறுப்புகள் எந்த செயற்குறியின் மூலம் அணுகப்படுகிறது?","options":["&",".","#","%"],"correct":"."},{"question":"பொருள் உருவாக்கப்படும் போது தானாகவே இயக்கப்படும் செயற்கூறு எது?","options":["__object__()","__del__()","__func__()","__init__()"],"correct":"__init__()"},{"question":"private இனக்குழு மாறியின் முன்னொட்டு எது?","options":["__ (இரட்டை அடிக்கோடு)","&&","##","**"],"correct":"__ (இரட்டை அடிக்கோடு)"},{"question":"பின்வரும் வழிமுறைகளில் எது அழிப்பியாகப் பயன்படுகிறது?","options":["__init__()","__dest__()","__rem__()","__del__()"],"correct":"__del__()"},{"question":"பின்வருவனவற்றுள் எந்த இனக்குழு அறிவிப்பு சரியானது?","options":["class class_name","class class_name<>","class class_name:","class class_name[]"],"correct":"class class_name:"},{"question":"class Student: def __init__(self, name): self.name=name; print(self.name); S=Student('Tamil') என்ற நிரலின் வெளியீடு:","options":["Error","Tamil","name","self"],"correct":"Tamil"},{"question":"பின்வருவனவற்றுள் எது private இனக்குழு மாறி?","options":["__num","##num","$$num","&&num"],"correct":"__num"},{"question":"பொருளை உருவாக்கும் செயல்முறை எவ்வாறு அழைக்கப்படுகிறது?","options":["ஆக்கி","அழிப்பி","மதிப்பிருத்தல்","சான்றுருவாக்கல்"],"correct":"சான்றுருவாக்கல்"}]},{"chapter":"பாடம் 11: தரவுதள கருத்துருக்கள்","questions":[{"question":"DBMS-ன் விரிவாக்கம்?","options":["DataBase Management Symbol","Database Managing System","DataBase Management System","DataBasic Management System"],"correct":"DataBase Management System"},{"question":"ஒரு அட்டவணை என்பது:","options":["வரிசை (tuple)","பண்புக்கூறுகள் (attribute)","உறவுகள் (relation)","அமைப்பு (entity)"],"correct":"உறவுகள் (relation)"},{"question":"எந்த தரவுதள மாதிரி பெற்றோர் குழந்தை உறவுநிலையைக் குறிப்பிடுகிறது?","options":["உறவுநிலை","வலைப்பின்னல்","படிநிலை (Hierarchical)","பொருள்"],"correct":"படிநிலை (Hierarchical)"},{"question":"உறவுநிலை தரவுதள மாதிரி முதலில் யாரால் முன்மொழியப்பட்டது?","options":["E F Codd","E E Codd","E F Cadd","E F Codder"],"correct":"E F Codd"},{"question":"படிநிலை மாதிரி எந்த வகை உறவு நிலையை குறிப்பிடுகிறது?","options":["ஒன்று ஒன்று","ஒன்று பல (one-to-many)","பல ஒன்று","பல பல"],"correct":"ஒன்று பல (one-to-many)"},{"question":"உறவுநிலை தரவுதளத்தின் தந்தை என அழைக்கப்படுபவர் யார்?","options":["Chris Date","Hugh Darween","Edgar Frank Codd","Edger Frank Cadd"],"correct":"Edgar Frank Codd"},{"question":"பின்வருவனவற்றுள் எது RDBMS?","options":["Dbase","Foxpro","MS-Access","MS-Excel"],"correct":"MS-Access"},{"question":"SELECT கூற்றுக்கு பயன்படும் சின்னம் யாது?","options":["σ (சிக்மா)","π (பை)","X","Ω"],"correct":"σ (சிக்மா)"},{"question":"ஒரு tuple என்பது:","options":["table","row","attribute","field"],"correct":"row"},{"question":"ER மாதிரியை உருவாக்கியவர் யார்?","options":["Chen","E F Codd","Chend","Chand"],"correct":"Chen"}]},{"chapter":"பாடம் 12: வினவல் அமைப்பு மொழி","questions":[{"question":"பின்வருவனவற்றுள் எது DDL கட்டளைப் பிரிவு ஆகும்?","options":["SELECT","INSERT","CREATE","UPDATE"],"correct":"SELECT"},{"question":"தரவுதளத்திலிருந்து ஓர் அட்டவணையை நிரந்தரமாக நீக்கப் பயன்படும் கட்டளை:","options":["DROP","DELETE","TRUNCATE","REMOVE"],"correct":"DROP"},{"question":"வினவலின் முடிவுகளை வரிசைப்படுத்த உதவும் கூற்று எது?","options":["GROUP BY","ORDER BY","WHERE","SORT"],"correct":"ORDER BY"},{"question":"ஏற்கனவே உள்ள அட்டவணையில் புதிய நெடுவரிசைகளைச் சேர்க்க உதவும் கட்டளை:","options":["ALTER","MODIFY","UPDATE","INSERT"],"correct":"ALTER"},{"question":"நடவடிக்கைகளை தரவுதளத்தில் நிரந்தரமாக சேமிக்க உதவும் TCL கட்டளை:","options":["COMMIT","ROLLBACK","SAVEPOINT","GRANT"],"correct":"COMMIT"}]},{"chapter":"பாடம் 13: பைத்தான் மற்றும் CSV கோப்புகள்","questions":[{"question":"CSV கோப்பு என்பது எந்த வகை கோப்பாகும்?","options":["தட்டைக்கோப்பு (Flat File)","3D File","String File","Random File"],"correct":"தட்டைக்கோப்பு (Flat File)"},{"question":"CRLF என்பதன் விரிவாக்கம்:","options":["Control Return Line Feed","Carriage Return and Line Feed","Carriage Right Line Front","Code Return Line File"],"correct":"Carriage Return and Line Feed"},{"question":"CSV கோப்புகளைக் கையாள பயன்படும் பைத்தான் தொகுதி எது?","options":["csv","excel","file","os"],"correct":"csv"},{"question":"இருநிலை வடிவத்தில் கோப்பினைப் படிக்க திறக்கும் முறைமை எது?","options":["r","rb (Binary mode)","w","wb"],"correct":"rb (Binary mode)"},{"question":"CSV கோப்பில் தலைப்பு வரியைத் தவிர்க்கப் பயன்படும் செயற்கூறு எது?","options":["next()","skip()","head()","jump()"],"correct":"next()"},{"question":"வரி முடிப்பான் குறியீட்டை வரையறுக்கும் அளபுரு எது?","options":["Line Terminator","delimiter","quotechar","quoting"],"correct":"Line Terminator"},{"question":"CSV கோப்பினை Dictionary வடிவில் படிக்கப் பயன்படும் முறை எது?","options":["reader()","writer()","DictWriter()","DictReader()"],"correct":"DictReader()"},{"question":"ஏற்கனவே உள்ள கோப்பின் தரவில் மாற்றங்கள் செய்வது அல்லது கூடுதல் தரவை சேர்ப்பது:","options":["மாற்றியமைத்தல் (Modification)","பதிப்பாய்வு","மாற்றம்","சேர்த்தல்"],"correct":"மாற்றம்"}]},{"chapter":"பாடம் 14: பைத்தானில் C++ நிரல்களை இறக்கம் செய்தல்","questions":[{"question":"பின்வருவனவற்றில் எது ஸ்கிரிப்டிங் மொழி அல்ல?","options":["பைத்தான்","ரூபி","பெர்ல்","HTML"],"correct":"HTML"},{"question":"பைத்தான் மற்றும் C++ நிரல்களை இணைக்கும் இடைமுக செயல்பாடு:","options":["மடக்குதல் (Wrapping)","பிணைத்தல்","இணைத்தல்","இறக்குமதி"],"correct":"மடக்குதல் (Wrapping)"},{"question":"API என்பதன் விரிவாக்கம்:","options":["Application Programming Interface","Application Process Interface","Applied Program Integration","Advanced Programming Interface"],"correct":"Application Programming Interface"},{"question":"பைத்தான் மற்றும் C++ நிரல்களை இணைக்க உதவும் கட்டமைப்பு எது?","options":["Boost","MinGW","SWIG","இவை அனைத்தும்"],"correct":"Boost"},{"question":"கணினி கட்டளைகளை இயக்க அனுமதிக்கும் பைத்தான் தொகுதி:","options":["OS தொகுதி","sys தொகுதி","getopt தொகுதி","math தொகுதி"],"correct":"OS தொகுதி"},{"question":"கட்டளை வரி செயலுருபுகளை பட்டியலாக சேமிக்கும் sys மாறியானது:","options":["argv","args (args variable)","cmd","line"],"correct":"cmd"},{"question":"முனையத்தில் பைத்தான் கோப்பை இயக்கப் பயன்படும் கட்டளை:","options":["python filename","run filename","exec filename","start filename"],"correct":"python filename"}]},{"chapter":"பாடம் 15: SQL மூலம் தரவுகளைக் கையாளுதல்","questions":[{"question":"பைத்தானுடன் உள்ளிணைந்து வரும் SQLite தொகுதி எது?","options":["sqlite3 (Database)","sql","pysql","mysql"],"correct":"sqlite3 (Database)"},{"question":"SQLite என்பது ஒரு:","options":["Flat File","உறவுநிலை தரவுதள அமைப்பு (RDBMS)","வலைப்பின்னல்","படிநிலை"],"correct":"உறவுநிலை தரவுதள அமைப்பு (RDBMS)"},{"question":"SQL கட்டளைகளை இயக்கவும் பதிவுகளை மீட்டெடுக்கவும் பயன்படும் பொருள் எது?","options":["Cursor","Connection","Table","Query"],"correct":"Cursor"},{"question":"தரவுதளத்தில் செய்யப்பட்ட மாற்றங்களை நிரந்தரமாக சேமிக்கும் முறை:","options":["Commit","Save","Close","Execute"],"correct":"Commit"},{"question":"SQL கட்டளைகளை இயக்கப் பயன்படும் முறை எது?","options":["execute()","run()","commit()","fetch()"],"correct":"execute()"},{"question":"பின்வருவனவற்றில் எது SQL-ன் திரட்டுச் செயற்கூறு (Aggregate Function)?","options":["MAX()","AVG()","COUNT()","இவை அனைத்தும்"],"correct":"MAX()"},{"question":"வினவலில் நகல் வரிசைகளைத் தவிர்க்கும் சிறப்புச் சொல் எது?","options":["Distinct","Unique","GroupBy","Filter"],"correct":"Distinct"}]},{"chapter":"பாடம் 16: தரவுக் காட்சிப்படுத்துதல்: Pyplot வரைபடங்கள்","questions":[{"question":"தரவுக் காட்சிப்படுத்துதலுக்குப் பயன்படும் பைத்தான் நூலகம் எது?","options":["matplotlib.pyplot","pandas","numpy","tkinter"],"correct":"matplotlib.pyplot"},{"question":"Matplotlib போன்ற தொகுப்புகளை நிறுவ உதவும் கருவி எது?","options":["PIP","IDLE","GCC","SWIG"],"correct":"PIP"},{"question":"தகவல்கள் மற்றும் தரவுகளை வரைகலை வடிவில் காட்சிப்படுத்துவது:","options":["தரவுக் காட்சிப்படுத்துதல் (Data Visualization)","தரவு சுரங்கம்","தரவு செயலாக்கம்","தரவு அறிவியல்"],"correct":"தரவு அறிவியல்"},{"question":"முக்கியத் தகவல்களை ஒற்றைத் திரையில் ஒருங்கிணைத்துக் காட்டும் வரைகலை காட்சி:","options":["Dashboard","Plot","Infographics","Report"],"correct":"Dashboard"},{"question":"நேர்கோட்டுப் பிரிவுகளால் இணைக்கப்பட்ட தொடர் தரவுப் புள்ளிகளாக தகவல்களைக் காட்டும் வரைபடம்:","options":["கோட்டு வரைபடம் (Line Chart)","பட்டை வரைபடம்","வட்ட வரைபடம்","சிதறல் வரைபடம்"],"correct":"கோட்டு வரைபடம் (Line Chart)"}]}];
+
+    // AI/CS-flavoured icon per chapter (fixed order, matches BOOK_BACK_CHAPTERS).
+    const CHAPTER_ICONS = ["🧩","🧠","🔍","🧮","🐍","🔀","⚙️","🔤","📦","🏗️","🗄️","🧾","📄","🔗","🛠️","📈"];
+
     let studentName = "";
     let schoolName = "";
+    let studentClass = "";
+    let registerNumber = "";
     let currentChapter = "";
+    let testType = "chapter";      // "chapter" | "mixed" | "custom" | "weak"
+    let testMeta = {};
     let questions = [];
     let currentIndex = 0;
     let answers = {};
     let timer, timeLeft = 0;
-    let allChapters = [];
-    const LETTERS = ["A","B","C","D","E","F"];
-    const CHIP_COLORS = ["linear-gradient(135deg,#22E4FF,#4C7BFF)","linear-gradient(135deg,#A855F7,#FF3EA5)","linear-gradient(135deg,#4CFFB0,#22E4FF)","linear-gradient(135deg,#FFC845,#FF8A3D)","linear-gradient(135deg,#FF3EA5,#FF8A3D)"];
-
-    function enterQuiz() {
-      studentName = document.getElementById("studentName").value.trim();
-      schoolName = document.getElementById("schoolName").value.trim();
-      if (!studentName || !schoolName) {
-        alert("Please enter your name and school name!");
-        return;
-      }
-      document.getElementById("loginSection").classList.add("hidden");
-      document.getElementById("chapterSection").classList.remove("hidden");
-      loadChapters();
-    }
-
-    function loadChapters() {
-      const list = document.getElementById("chapterList");
-      list.className = "skeleton-row";
-      list.innerHTML = `<div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>`;
-
-      fetch(APP_URL + "?mode=chapters")
-        .then(r => r.json())
-        .then(data => {
-          allChapters = filterOutResponsesSheet(data.chapters);
-          list.className = "chapter-grid";
-          list.innerHTML = "";
-          allChapters.forEach((ch, i) => {
-            const btn = document.createElement("button");
-            btn.className = "chapter-card";
-            btn.innerHTML = `
-              <span class="chapter-num" style="background:${CHIP_COLORS[i % CHIP_COLORS.length]}">${String(i + 1).padStart(2,'0')}</span>
-              <span class="chapter-name">${ch}</span>
-              <span class="chapter-arrow">➜</span>`;
-            btn.onclick = () => startChapter(ch);
-            list.appendChild(btn);
-          });
-          renderMixedChapterList();
-        })
-        .catch(() => {
-          list.className = "";
-          list.innerHTML = `<div class="error-box">Couldn't load chapters. Please check your connection.
-            <br><button class="btn btn-ghost" onclick="loadChapters()">Retry</button></div>`;
-        });
-    }
-
-    // Drops the results/"Responses" sheet tab that comes back from the Apps Script
-    // chapter list (it's the storage sheet, not an actual chapter to quiz on).
-    function filterOutResponsesSheet(chapters) {
-      let filtered = (chapters || []).filter(ch => !/respons/i.test(ch));
-      if (filtered.length > 16) filtered = filtered.slice(0, 16);
-      return filtered;
-    }
-
-    function toggleMixedBuilder() {
-      const builder = document.getElementById("mixedBuilder");
-      const btn = document.getElementById("mixedToggleBtn");
-      const willShow = builder.classList.contains("hidden");
-      builder.classList.toggle("hidden", !willShow);
-      btn.innerText = willShow ? "Hide" : "Build a test";
-    }
-
-    function renderMixedChapterList() {
-      const box = document.getElementById("mixedChapterList");
-      box.innerHTML = "";
-      allChapters.forEach((ch, i) => {
-        const id = "mixedCh" + i;
-        const label = document.createElement("label");
-        label.className = "mixed-chapter-item";
-        label.setAttribute("for", id);
-        label.innerHTML = `
-          <input type="checkbox" id="${id}" value="${ch.replace(/"/g, '&quot;')}" onchange="onMixedCheckChange(this)">
-          <span>${ch}</span>`;
-        box.appendChild(label);
-      });
-    }
-
-    function onMixedCheckChange(input) {
-      input.closest(".mixed-chapter-item").classList.toggle("checked", input.checked);
-    }
-
-    function setAllMixedChapters(checked) {
-      document.querySelectorAll("#mixedChapterList input[type='checkbox']").forEach(box => {
-        box.checked = checked;
-        box.closest(".mixed-chapter-item").classList.toggle("checked", checked);
-      });
-    }
-
-    function getSelectedMixedChapters() {
-      return Array.from(document.querySelectorAll("#mixedChapterList input[type='checkbox']:checked")).map(b => b.value);
-    }
 
     function shuffleArray(arr) {
       const a = arr.slice();
@@ -559,92 +531,212 @@
       return a;
     }
 
-    function startMixedTest() {
-      const selectedChapters = getSelectedMixedChapters();
-      const hint = document.getElementById("mixedHint");
-      const countInput = document.getElementById("mixedQuestionCount");
-      const desiredCount = parseInt(countInput.value, 10);
+    function hashStr(s) {
+      let h = 0;
+      for (let i = 0; i < s.length; i++) { h = (h << 5) - h + s.charCodeAt(i); h |= 0; }
+      return h;
+    }
+    function weakKeyFor(q) { return hashStr((q.chapter || "") + "::" + q.question); }
 
-      if (selectedChapters.length === 0) {
-        hint.innerText = "Please select at least one chapter.";
-        hint.style.color = "var(--red)";
-        return;
-      }
-      if (!desiredCount || desiredCount < 1) {
-        hint.innerText = "Please enter a valid number of questions.";
-        hint.style.color = "var(--red)";
-        return;
-      }
-
-      hint.innerText = "Loading questions from " + selectedChapters.length + " chapter(s)...";
-      hint.style.color = "var(--text-faint)";
-
-      Promise.all(
-        selectedChapters.map(ch =>
-          fetch(APP_URL + "?mode=questions&chapter=" + encodeURIComponent(ch))
-            .then(r => r.json())
-            .then(data => (data.questions || []).map(q => ({ ...q, sourceChapter: ch })))
-        )
-      )
-        .then(results => {
-          const combined = shuffleArray(results.flat());
-          if (combined.length === 0) {
-            hint.innerText = "No questions found for the selected chapters.";
-            hint.style.color = "var(--red)";
-            return;
-          }
-          const finalCount = Math.min(desiredCount, combined.length);
-          questions = combined.slice(0, finalCount);
-          currentChapter = "Mixed Test — " + selectedChapters.length + " chapter(s), " + finalCount + " question(s)";
-          currentIndex = 0;
-          answers = {};
-
-          document.getElementById("chapterSection").classList.add("hidden");
-          document.getElementById("quizSection").classList.remove("hidden");
-          document.getElementById("chapterTitle").innerText = currentChapter;
-
-          timeLeft = questions.length * 60;
-          startTimer();
-          renderQuestion();
-          renderQuestionNav();
-        })
-        .catch(() => {
-          hint.innerText = "Couldn't load questions. Please check your connection and try again.";
-          hint.style.color = "var(--red)";
-        });
+    function normalizeChapterQuestions(chapter) {
+      return chapter.questions.map(q => ({
+        question: q.question, options: q.options, correct: q.correct, chapter: chapter.chapter
+      }));
     }
 
-    function startChapter(chapter) {
-      currentChapter = chapter;
+    /* ---------------- Login ---------------- */
+    function enterQuiz() {
+      studentName = document.getElementById("studentName").value.trim();
+      schoolName = document.getElementById("schoolName").value.trim();
+      studentClass = document.getElementById("studentClass").value.trim();
+      registerNumber = document.getElementById("registerNumber").value.trim();
+      const errorEl = document.getElementById("formError");
+      if (!studentName || !schoolName) {
+        errorEl.innerText = "Please enter your name and school name!";
+        return;
+      }
+      errorEl.innerText = "";
+      document.getElementById("loginSection").classList.add("hidden");
+      document.getElementById("chapterSection").classList.remove("hidden");
+
+      renderChapterList();
+      buildCustomChapterList();
+      refreshWeakBadge();
+    }
+
+    function renderChapterList() {
+      const list = document.getElementById("chapterList");
+      list.className = "chapter-grid";
+      list.innerHTML = "";
+      BOOK_BACK_CHAPTERS.forEach((ch, i) => {
+        const btn = document.createElement("button");
+        btn.className = "chapter-card";
+        btn.innerHTML = `
+          <span class="chapter-num" style="background:${CHIP_COLORS[i % CHIP_COLORS.length]}">${CHAPTER_ICONS[i % CHAPTER_ICONS.length]}</span>
+          <span class="chapter-name">${ch.chapter}</span>
+          <span class="chapter-count">${ch.questions.length} வினாக்கள்</span>
+          <span class="chapter-arrow">➜</span>`;
+        btn.onclick = () => startChapter(i);
+        list.appendChild(btn);
+      });
+    }
+
+    /* ---------------- Starting tests ---------------- */
+    function startChapter(idx) {
+      const ch = BOOK_BACK_CHAPTERS[idx];
+      if (!ch) return;
+      const qs = normalizeChapterQuestions(ch);
+      beginTest(qs, ch.chapter, "chapter", { chapterIndex: idx });
+    }
+
+    function startMixedTest(count) {
+      const all = BOOK_BACK_CHAPTERS.flatMap(normalizeChapterQuestions);
+      const n = Math.max(1, Math.min(count || 20, all.length));
+      const picked = shuffleArray(all).slice(0, n);
+      beginTest(picked, "Mixed Test — " + n + " questions", "mixed", { count: n });
+    }
+
+    function startCustomTest(chapterIdxs, count) {
+      if (!chapterIdxs || !chapterIdxs.length) {
+        const hint = document.getElementById("customHint");
+        hint.innerText = "குறைந்தது ஒரு பாடத்தையாவது தேர்ந்தெடுக்கவும்.";
+        hint.style.color = "var(--red)";
+        return;
+      }
+      const all = chapterIdxs.flatMap(i => normalizeChapterQuestions(BOOK_BACK_CHAPTERS[i]));
+      const n = Math.max(1, Math.min(count || all.length, all.length));
+      const picked = shuffleArray(all).slice(0, n);
+      const label = "Custom Test — " + chapterIdxs.length + " chapter(s), " + n + " question(s)";
+      beginTest(picked, label, "custom", { chapterIdxs: chapterIdxs, count: n });
+    }
+
+    function startWeakTest() {
+      const map = loadWeakMap();
+      const keys = Object.keys(map);
+      if (!keys.length) {
+        alert("இன்னும் பலவீன வினாக்கள் இல்லை. சில தேர்வுகள் எழுதுங்கள் — தவறான விடைகள் இங்கே தோன்றும்.");
+        return;
+      }
+      const list = keys.map(k => map[k]);
+      beginTest(list, "Weak Questions Review — " + list.length + " questions", "weak", {});
+    }
+
+    function restartCurrentTest() {
+      if (testType === "mixed") startMixedTest(testMeta.count);
+      else if (testType === "custom") startCustomTest(testMeta.chapterIdxs, testMeta.count);
+      else if (testType === "weak") startWeakTest();
+      else startChapter(testMeta.chapterIndex);
+    }
+
+    /* ---------------- Mode panel toggling ---------------- */
+    function togglePanel(id) {
+      ["panelMixed", "panelCustom"].forEach(p => {
+        if (p === id) document.getElementById(p).classList.toggle("hidden");
+        else document.getElementById(p).classList.add("hidden");
+      });
+    }
+    document.getElementById("btnModeMixed").onclick = () => togglePanel("panelMixed");
+    document.getElementById("btnModeCustom").onclick = () => togglePanel("panelCustom");
+    document.getElementById("btnModeWeak").onclick = () => startWeakTest();
+    document.getElementById("btnStartMixed").onclick = () => {
+      const n = parseInt(document.getElementById("mixedCount").value, 10) || 20;
+      startMixedTest(n);
+    };
+    document.getElementById("btnStartCustom").onclick = () => {
+      const idxs = Array.from(document.querySelectorAll(".custom-chk:checked")).map(c => parseInt(c.dataset.idx, 10));
+      const countVal = parseInt(document.getElementById("customCount").value, 10);
+      startCustomTest(idxs, countVal);
+    };
+
+    function buildCustomChapterList() {
+      const container = document.getElementById("customChapterList");
+      container.innerHTML = "";
+      BOOK_BACK_CHAPTERS.forEach((ch, idx) => {
+        const row = document.createElement("label");
+        row.className = "custom-chapter-item";
+        row.innerHTML = `
+          <input type="checkbox" class="custom-chk" data-idx="${idx}">
+          <span>${CHAPTER_ICONS[idx % CHAPTER_ICONS.length]} ${ch.chapter} <span style="color:var(--text-faint); font-size:11.5px;">(${ch.questions.length})</span></span>`;
+        container.appendChild(row);
+      });
+      container.querySelectorAll(".custom-chk").forEach(chk => chk.addEventListener("change", updateCustomTotal));
+      updateCustomTotal();
+    }
+
+    function updateCustomTotal() {
+      const checked = Array.from(document.querySelectorAll(".custom-chk:checked"));
+      document.getElementById("customTotalCount").innerText = checked.length + " chapters selected";
+      const countRow = document.getElementById("customCountRow");
+      countRow.style.display = checked.length > 0 ? "flex" : "none";
+      const hint = document.getElementById("customHint");
+      if (checked.length > 0) { hint.innerText = ""; }
+    }
+    document.getElementById("btnSelectAll").onclick = () => {
+      document.querySelectorAll(".custom-chk").forEach(c => c.checked = true);
+      updateCustomTotal();
+    };
+    document.getElementById("btnSelectNone").onclick = () => {
+      document.querySelectorAll(".custom-chk").forEach(c => c.checked = false);
+      updateCustomTotal();
+    };
+
+    /* ---------------- Weak question tracking ---------------- */
+    function loadWeakMap() {
+      try { return JSON.parse(localStorage.getItem(WEAK_KEY) || "{}"); }
+      catch (e) { return {}; }
+    }
+    function saveWeakMap(map) {
+      try { localStorage.setItem(WEAK_KEY, JSON.stringify(map)); }
+      catch (e) { /* storage unavailable */ }
+    }
+    function refreshWeakBadge() {
+      const map = loadWeakMap();
+      const count = Object.keys(map).length;
+      const badge = document.getElementById("weakCount");
+      if (badge) badge.innerText = count;
+      const card = document.getElementById("btnModeWeak");
+      if (card) card.classList.toggle("mode-disabled", count === 0);
+    }
+    function updateWeakFromResult() {
+      const map = loadWeakMap();
+      questions.forEach((q, i) => {
+        const key = weakKeyFor(q);
+        const chosen = answers[i];
+        const isCorrect = chosen === q.correct;
+        if (isCorrect) delete map[key];
+        else map[key] = { question: q.question, options: q.options, correct: q.correct, chapter: q.chapter };
+      });
+      saveWeakMap(map);
+      refreshWeakBadge();
+    }
+
+    /* ---------------- Test flow ---------------- */
+    function beginTest(rawQuestions, label, type, meta) {
+      testType = type;
+      testMeta = meta || {};
+      currentChapter = label;
+      questions = shuffleArray(rawQuestions);
+      currentIndex = 0;
+      answers = {};
+      timeLeft = questions.length * 60;
+
       document.getElementById("chapterSection").classList.add("hidden");
       document.getElementById("quizSection").classList.remove("hidden");
-      document.getElementById("chapterTitle").innerText = chapter;
-      document.getElementById("questionContainer").innerHTML = `<div class="question-card"><div class="skeleton-card" style="height:160px;"></div></div>`;
+      document.getElementById("chapterTitle").innerText = label;
 
-      fetch(APP_URL + "?mode=questions&chapter=" + encodeURIComponent(chapter))
-        .then(r => r.json())
-        .then(data => {
-          questions = data.questions;
-          currentIndex = 0;
-          answers = {};
-          timeLeft = questions.length * 60;
-          startTimer();
-          renderQuestion();
-          renderQuestionNav();
-        })
-        .catch(() => {
-          document.getElementById("questionContainer").innerHTML = `
-            <div class="error-box">Couldn't load questions for this chapter.
-              <br><button class="btn btn-ghost" onclick="startChapter('${chapter}')">Retry</button></div>`;
-        });
+      startTimer();
+      renderQuestion();
+      renderQuestionNav();
     }
 
     function renderQuestion() {
       const q = questions[currentIndex];
       const container = document.getElementById("questionContainer");
+      const showChapterTag = (testType === "mixed" || testType === "custom" || testType === "weak") && q.chapter;
       container.innerHTML = `
         <div class="question-card">
           <span class="q-index">QUESTION ${currentIndex + 1} OF ${questions.length}</span>
+          ${showChapterTag ? `<span class="q-chapter-tag">${q.chapter}</span>` : ""}
           <p class="q-text">${q.question}</p>
           ${q.options.map((opt, i) => `
             <div class="bubble-option ${answers[currentIndex] === opt ? 'selected' : ''}"
@@ -745,6 +837,7 @@
         review.push(`
           <div class="question-card">
             <span class="q-index">QUESTION ${i + 1}</span>
+            ${q.chapter ? `<span class="q-chapter-tag">${q.chapter}</span>` : ""}
             <p class="q-text">${q.question}</p>
             ${q.options.map((opt, j) => `
               <div class="bubble-option
@@ -758,24 +851,47 @@
         `);
       });
 
+      updateWeakFromResult();
+
       document.getElementById("quizSection").classList.add("hidden");
       document.getElementById("resultSection").classList.remove("hidden");
       document.getElementById("scoreText").innerText = `${score} / ${questions.length}`;
       document.getElementById("resultChapter").innerText = currentChapter;
+      document.getElementById("rsName").innerText = studentName || "-";
+      document.getElementById("rsSchool").innerText = schoolName || "-";
+      document.getElementById("rsClass").innerText = studentClass || "-";
+      document.getElementById("rsReg").innerText = registerNumber || "-";
       document.getElementById("reviewContainer").innerHTML = review.join("");
 
       fetch(APP_URL, {
         method: "POST",
-        body: JSON.stringify({ name: studentName, school: schoolName, chapter: currentChapter, score, total: questions.length, answers })
+        body: JSON.stringify({
+          name: studentName, school: schoolName, class: studentClass, registerNumber: registerNumber,
+          chapter: currentChapter, score, total: questions.length, answers
+        })
       });
     }
 
-    document.getElementById("backToChaptersBtn").onclick = function() {
+    /* ---------------- Navigation between sections ---------------- */
+    function resetToChapters() {
+      document.getElementById("quizSection").classList.add("hidden");
       document.getElementById("resultSection").classList.add("hidden");
       document.getElementById("chapterSection").classList.remove("hidden");
+      document.getElementById("panelMixed").classList.add("hidden");
+      document.getElementById("panelCustom").classList.add("hidden");
       currentChapter = ""; questions = []; currentIndex = 0; answers = {};
       clearInterval(timer);
-      loadChapters();
+    }
+
+    document.getElementById("backToChaptersTopBtn").onclick = function () {
+      const answeredCount = Object.keys(answers).length;
+      if (answeredCount > 0 && !confirm("Leave this test? Your answers will not be saved.")) return;
+      resetToChapters();
+    };
+    document.getElementById("backToChaptersBtn").onclick = function () { resetToChapters(); };
+    document.getElementById("restartTestBtn").onclick = function () {
+      document.getElementById("resultSection").classList.add("hidden");
+      restartCurrentTest();
     };
   </script>
 </body>
