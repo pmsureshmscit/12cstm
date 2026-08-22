@@ -172,16 +172,17 @@
   .mode-card{
     background:rgba(255,255,255,0.05); border:1.5px solid var(--card-border); border-radius:var(--radius-md);
     padding:18px; text-align:left; cursor:pointer; width:100%; font-family:inherit;
+    color:#FFFFFF;
     display:flex; flex-direction:column; gap:6px; position:relative; overflow:hidden;
     transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
   }
   .mode-card::after{ content:""; position:absolute; inset:0 0 auto 0; height:3px; background:var(--grad-main); }
   .mode-card:hover{ transform:translateY(-4px); border-color:var(--purple); box-shadow:var(--glow-purple); background:rgba(255,255,255,0.08); }
-  .mode-card.mode-disabled{ opacity:0.4; }
+  .mode-card.mode-disabled{ opacity:0.7; }
   .mode-card.mode-disabled:hover{ transform:none; box-shadow:none; border-color:var(--card-border); }
-  .mode-icon{ font-size:24px; }
-  .mode-title{ font-family:var(--font-display); font-size:15.5px; font-weight:700; }
-  .mode-sub{ font-family:var(--font-tamil); font-size:12.5px; color:var(--text-dim); }
+  .mode-icon{ font-size:24px; color:#FFFFFF; }
+  .mode-title{ font-family:var(--font-display); font-size:15.5px; font-weight:700; color:#FFFFFF; }
+  .mode-sub{ font-family:var(--font-tamil); font-size:12.5px; color:#FFFFFF; }
 
   .mode-panel{
     background:linear-gradient(135deg, rgba(168,85,247,0.12), rgba(34,228,255,0.08));
@@ -498,7 +499,9 @@
   <script>
     // Score submissions still post to the Apps Script backend for logging (question
     // content itself is embedded below and no longer fetched live).
-    const APP_URL = "https://script.google.com/macros/s/AKfycbxINB3yR8VypUeRos80tuMm77mD2ozRkqVGZosjo3mFOEFuD_mhUwYZ_MO9XM6x8ElG/exec";
+    const APP_URL = "https://script.google.com/macros/s/AKfycbydjsNypJvg1q276bVEx7Vahzpf_JK7W2t2vHxJYqV75ESymWiq8ITnZT1iXkhGjEoxIA/exec";
+    const SUBJECT_NAME = "Computer Science";
+    const MEDIUM_NAME = "Tamil";
     const WEAK_KEY = "cs12_tm_weak_questions_v1";
     const LETTERS = ["A","B","C","D","E","F"];
     const CHIP_COLORS = ["linear-gradient(135deg,#22E4FF,#4C7BFF)","linear-gradient(135deg,#A855F7,#FF3EA5)","linear-gradient(135deg,#4CFFB0,#22E4FF)","linear-gradient(135deg,#FFC845,#FF8A3D)","linear-gradient(135deg,#FF3EA5,#FF8A3D)"];
@@ -863,13 +866,39 @@
       document.getElementById("rsReg").innerText = registerNumber || "-";
       document.getElementById("reviewContainer").innerHTML = review.join("");
 
+      sendResultToSheet(score, questions.length);
+    }
+
+    function sendResultToSheet(score, totalQuestions) {
+      const now = new Date();
+      const answeredCount = Object.keys(answers).length;
+      const wrongCount = Math.max(answeredCount - score, 0);
+      const pct = totalQuestions ? Math.round((score / totalQuestions) * 100) : 0;
+
+      const payload = {
+        date: now.toLocaleDateString('en-IN'),
+        time: now.toLocaleTimeString('en-IN'),
+        studentName: studentName,
+        school: schoolName,
+        class: studentClass,
+        registerNumber: registerNumber,
+        subject: SUBJECT_NAME,
+        medium: MEDIUM_NAME,
+        testType: testType,
+        testLabel: currentChapter,
+        totalQuestions: totalQuestions,
+        keyedQuestions: answeredCount,
+        correct: score,
+        wrong: wrongCount,
+        percentage: pct
+      };
+
+      // text/plain avoids a CORS preflight against the Apps Script web app
       fetch(APP_URL, {
         method: "POST",
-        body: JSON.stringify({
-          name: studentName, school: schoolName, class: studentClass, registerNumber: registerNumber,
-          chapter: currentChapter, score, total: questions.length, answers
-        })
-      });
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      }).catch(err => console.warn("Result logging failed:", err));
     }
 
     /* ---------------- Navigation between sections ---------------- */
